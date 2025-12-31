@@ -69,8 +69,20 @@ export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCard
   const injury = player.injury_status || 
     (player.sleeper_id && sleeperPlayers?.[player.sleeper_id]?.injury_status)
   
+  const getPositionColor = (position: string) => {
+    const colors: Record<string, string> = {
+      'QB': 'QB',
+      'RB': 'RB',
+      'WR': 'WR',
+      'TE': 'TE',
+      'K': 'K',
+      'DEF': 'DEF'
+    }
+    return colors[position] || ''
+  }
+  
   return (
-    <div className="player-card">
+    <div className="player-card fade-in">
       {logoPath && (
         <div className="player-logo-container">
           <Image
@@ -84,23 +96,31 @@ export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCard
       )}
       <div className="player-content">
         <div className="player-name">
-          {index !== undefined && <span className="num-badge">{index}.</span>}
-          {player.name}
-          <span className="player-team">({player.team})</span>
+          {index !== undefined && <span className="num-badge">{index}</span>}
+          <span>{player.name}</span>
+          <span className="player-team">{player.team}</span>
+          {player.position && (
+            <span className={`position-tag ${getPositionColor(player.position)}`}>
+              {player.position}
+            </span>
+          )}
         </div>
         <div className="player-meta">
           <span className="badge">Overall #{player.overall_rank}</span>
           <span className="badge">{player.position} #{player.position_rank}</span>
           <span className="badge">Tier {player.tier}</span>
-          <span className="badge">Bye {player.bye_week}</span>
-          <span className="badge">SOS {player.sos_season}</span>
-          <span className="badge">ECR vs ADP {player.ecr_vs_adp > 0 ? '+' : ''}{player.ecr_vs_adp}</span>
+          {player.bye_week > 0 && <span className="badge">Bye {player.bye_week}</span>}
+          {player.sos_season && <span className="badge">SOS {player.sos_season}</span>}
+          {player.ecr_vs_adp !== 0 && (
+            <span className="badge">
+              ADP {player.ecr_vs_adp > 0 ? '+' : ''}{player.ecr_vs_adp}
+            </span>
+          )}
         </div>
         {injury && (
-          <div className="player-injury">Injury: {injury}</div>
+          <div className="player-injury">{injury}</div>
         )}
       </div>
     </div>
   )
 }
-

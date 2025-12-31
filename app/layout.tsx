@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Fantasyzer',
-  description: 'Fantasy football draft assistant and season manager',
+  title: 'Fantasyzer - Fantasy Football Assistant',
+  description: 'Professional fantasy football draft assistant and season manager with real-time rankings and recommendations',
 }
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body style={{ margin: 0, padding: 0 }}>{children}</body>
     </html>
   )
 }

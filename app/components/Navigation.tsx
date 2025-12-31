@@ -8,14 +8,23 @@ export default function Navigation() {
   
   return (
     <nav className="nav">
-      <Link href="/draft" className={pathname === '/draft' ? 'btn btn-primary' : 'btn'}>
-        🏈 Draft Assistant
+      <Link 
+        href="/draft" 
+        className={pathname === '/draft' ? 'btn btn-primary' : 'btn'}
+        style={{ textDecoration: 'none' }}
+      >
+        <span>🏈</span>
+        <span>Draft Assistant</span>
       </Link>
       <div className="nav-center">Fantasyzer</div>
-      <Link href="/" className={pathname === '/' ? 'btn btn-primary' : 'btn'}>
-        📊 Weekly Rankings
+      <Link 
+        href="/" 
+        className={pathname === '/' ? 'btn btn-primary' : 'btn'}
+        style={{ textDecoration: 'none' }}
+      >
+        <span>📊</span>
+        <span>Weekly Rankings</span>
       </Link>
     </nav>
   )
 }
-
