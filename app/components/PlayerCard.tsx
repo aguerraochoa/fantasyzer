@@ -88,20 +88,20 @@ export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCard
           <Image
             src={logoPath}
             alt={player.team}
-            width={40}
-            height={40}
+            width={32}
+            height={32}
             className="player-logo"
           />
         </div>
       )}
       <div className="player-content">
-        <div className="player-name">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', flexWrap: 'wrap', flex: 1 }}>
           {index !== undefined && <span className="num-badge">{index}</span>}
-          <span>{player.name}</span>
+          <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>{player.name}</span>
           {player.team && (
             <span style={{ 
               color: 'var(--text-tertiary)',
-              fontSize: '0.875rem',
+              fontSize: '0.8125rem',
               fontWeight: 400
             }}>
               {player.team}
@@ -112,28 +112,20 @@ export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCard
               {player.position}
             </span>
           )}
-        </div>
-        <div className="player-meta">
-          <span className="badge">Overall #{player.overall_rank}</span>
-          <span className="badge">{player.position} #{player.position_rank}</span>
-          <span className="badge">Tier {player.tier}</span>
+          <span className="badge">#{player.overall_rank}</span>
+          <span className="badge">{player.position}#{player.position_rank}</span>
+          {player.tier && <span className="badge">T{player.tier}</span>}
           {player.bye_week > 0 && <span className="badge">Bye {player.bye_week}</span>}
-          {player.sos_season && <span className="badge">SOS {player.sos_season}</span>}
-          {player.ecr_vs_adp !== 0 && (
-            <span className="badge">
-              ADP {player.ecr_vs_adp > 0 ? '+' : ''}{player.ecr_vs_adp}
-            </span>
-          )}
         </div>
         {injury && (
-          <div style={{ 
-            marginTop: '0.5rem',
-            fontSize: '0.875rem',
+          <span style={{ 
+            fontSize: '0.75rem',
             color: 'var(--accent-error)',
-            fontWeight: 500
+            fontWeight: 500,
+            whiteSpace: 'nowrap'
           }}>
             ⚠️ {injury}
-          </div>
+          </span>
         )}
       </div>
     </div>

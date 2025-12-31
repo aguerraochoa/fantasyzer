@@ -135,19 +135,14 @@ export default function WeeklyRankingsPage() {
     const statusClass = freeAgent ? 'status-free-agent' : player.is_on_roster ? 'status-on-roster' : ''
     
     return (
-      <div 
-        className="player-card fade-in"
-        style={{ 
-          marginBottom: '16px'
-        }}
-      >
+      <div className="player-card fade-in" style={{ marginBottom: 'var(--spacing-sm)' }}>
         {logoPath && (
           <div className="player-logo-container">
             <Image 
               src={logoPath} 
               alt={player.team || ''} 
-              width={40} 
-              height={40}
+              width={32} 
+              height={32}
               style={{
                 objectFit: 'contain',
                 maxWidth: '100%',
@@ -156,13 +151,13 @@ export default function WeeklyRankingsPage() {
             />
           </div>
         )}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="player-content" style={{ flex: 1, minWidth: 0 }}>
           <div style={{ 
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
+            gap: 'var(--spacing-sm)',
             flexWrap: 'wrap',
-            marginBottom: '8px'
+            flex: 1
           }}>
             {rosterSlot && (
               <span className="badge" style={{ 
@@ -173,18 +168,18 @@ export default function WeeklyRankingsPage() {
                 {rosterSlot}
               </span>
             )}
-            <strong style={{ fontSize: '1.125rem' }}>{player.name}</strong>
+            <strong style={{ fontSize: '0.9375rem', fontWeight: 600 }}>{player.name}</strong>
             {positionText && (
               <span style={{ 
                 color: 'var(--text-tertiary)',
-                fontSize: '0.875rem'
+                fontSize: '0.8125rem'
               }}>
                 {positionText}
               </span>
             )}
             <span style={{ 
               color: 'var(--text-tertiary)',
-              fontSize: '0.875rem'
+              fontSize: '0.8125rem'
             }}>
               {player.team || ''}
             </span>
@@ -193,28 +188,27 @@ export default function WeeklyRankingsPage() {
               borderColor: 'rgba(157, 180, 212, 0.4)',
               color: 'var(--periwinkle)'
             }}>
-              Rank #{player.rank}
+              #{player.rank}
             </span>
             {waiverIndicator && (
-              <span className={`status-indicator ${statusClass}`}>
+              <span className={`status-indicator ${statusClass}`} style={{ fontSize: '0.6875rem', padding: '0.1875rem 0.5rem' }}>
                 {waiverIndicator.replace(/[()]/g, '')}
               </span>
             )}
             {freeAgent && (
-              <span className="status-indicator status-free-agent">
+              <span className="status-indicator status-free-agent" style={{ fontSize: '0.6875rem', padding: '0.1875rem 0.5rem' }}>
                 ✨ FREE AGENT
               </span>
             )}
           </div>
           {upgradeInfo && (
-            <div style={{ 
-              fontSize: '0.875rem', 
-              color: 'var(--text-tertiary)', 
-              marginTop: '8px',
-              paddingLeft: '4px'
+            <span style={{ 
+              fontSize: '0.75rem', 
+              color: 'var(--text-tertiary)',
+              whiteSpace: 'nowrap'
             }}>
               {upgradeInfo}
-            </div>
+            </span>
           )}
         </div>
       </div>
@@ -492,23 +486,15 @@ export default function WeeklyRankingsPage() {
 
               {optimalAnalysis && optimalAnalysis.optimal_starters && (
                 <>
-                  <hr />
-                  <div className="section-title">
-                    <span>⭐ Optimal Starting Lineup</span>
-                  </div>
+                  <div className="section-title">⭐ Optimal Starting Lineup</div>
                   
-                  <div style={{
-                    background: 'var(--bg-card)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    marginTop: '24px'
-                  }}>
+                  <div className="card" style={{ padding: 'var(--spacing-lg)', marginTop: 'var(--spacing-md)' }}>
                     <h4 style={{ 
-                      marginBottom: '20px',
-                      fontSize: '1.25rem'
+                      marginBottom: 'var(--spacing-md)',
+                      fontSize: '1rem',
+                      fontWeight: 600
                     }}>
-                      🎯 OPTIMAL STARTING LINEUP (Including Best Available Free Agents)
+                      🎯 Optimal Starting Lineup (Including Best Available Free Agents)
                     </h4>
                     {optimalAnalysis.optimal_starters.map((player: any, idx: number) => {
                       const positionDisplay = player.position_with_rank || player.position
@@ -535,9 +521,9 @@ export default function WeeklyRankingsPage() {
                     })}
                     
                     {optimalAnalysis.free_agent_upgrades && optimalAnalysis.free_agent_upgrades.length > 0 && (
-                      <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border-color)' }}>
-                        <h4 style={{ marginBottom: '16px' }}>📈 Free Agent Upgrade Summary</h4>
-                        <div className="message message-success" style={{ marginBottom: '20px' }}>
+                      <div style={{ marginTop: 'var(--spacing-lg)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-light)' }}>
+                        <h4 style={{ marginBottom: 'var(--spacing-sm)', fontSize: '0.9375rem', fontWeight: 600 }}>📈 Free Agent Upgrade Summary</h4>
+                        <div className="message message-success" style={{ marginBottom: 'var(--spacing-md)', padding: 'var(--spacing-sm)' }}>
                           🚀 <strong>{optimalAnalysis.free_agent_upgrades.length} potential upgrade(s)</strong> with{' '}
                           <strong>+{optimalAnalysis.free_agent_upgrades.reduce((sum: number, u: any) => sum + u.improvement, 0)} total rank improvement</strong>
                         </div>
@@ -545,14 +531,15 @@ export default function WeeklyRankingsPage() {
                           <div 
                             key={idx} 
                             style={{ 
-                              marginBottom: '12px',
-                              padding: '12px',
+                              marginBottom: 'var(--spacing-sm)',
+                              padding: 'var(--spacing-sm)',
                               background: 'rgba(74, 111, 165, 0.05)',
-                              borderRadius: '8px',
-                              border: '1px solid var(--border-color)'
+                              borderRadius: 'var(--radius-md)',
+                              border: '1px solid var(--border-light)',
+                              fontSize: '0.875rem'
                             }}
                           >
-                            <strong>{upgrade.position}</strong>: {upgrade.add.name} (#{upgrade.add.rank}) replaces {upgrade.drop.name} (#{upgrade.drop.rank}) - <strong style={{ color: 'var(--success)' }}>+{upgrade.improvement} ranks</strong>
+                            <strong>{upgrade.position}</strong>: {upgrade.add.name} (#{upgrade.add.rank}) replaces {upgrade.drop.name} (#{upgrade.drop.rank}) - <strong style={{ color: 'var(--accent-success)' }}>+{upgrade.improvement} ranks</strong>
                           </div>
                         ))}
                       </div>
@@ -563,36 +550,29 @@ export default function WeeklyRankingsPage() {
 
               {rosAnalysis && (
                 <>
-                  <hr />
-                  <div className="section-title">
-                    <span>🔄 ROS Upgrade Recommendations</span>
-                  </div>
+                  <div className="section-title">🔄 ROS Upgrade Recommendations</div>
                   
                   <div style={{ 
                     display: 'grid', 
                     gridTemplateColumns: '1fr 1fr', 
-                    gap: '32px',
-                    marginTop: '24px'
+                    gap: 'var(--spacing-lg)',
+                    marginTop: 'var(--spacing-md)'
                   }}>
-                    <div style={{
-                      background: 'var(--bg-card)',
-                      border: '1px solid var(--border-color)',
-                      borderRadius: '16px',
-                      padding: '24px'
-                    }}>
-                      <h4 style={{ marginBottom: '24px' }}>📍 Position-Specific Upgrades</h4>
+                    <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
+                      <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', fontWeight: 600 }}>📍 Position-Specific Upgrades</h4>
                       {['QB', 'RB', 'WR', 'TE'].map((position) => {
                         const recommendations = rosAnalysis.position_recommendations?.[position] || []
                         const emojis: Record<string, string> = {'QB': '🎯', 'RB': '🏈', 'WR': '⚡', 'TE': '🎪'}
                         
                         return (
-                          <div key={position} style={{ marginBottom: '32px' }}>
+                          <div key={position} style={{ marginBottom: 'var(--spacing-lg)' }}>
                             <h5 style={{ 
-                              marginBottom: '16px',
-                              fontSize: '1rem',
+                              marginBottom: 'var(--spacing-sm)',
+                              fontSize: '0.875rem',
                               display: 'flex',
                               alignItems: 'center',
-                              gap: '8px'
+                              gap: 'var(--spacing-xs)',
+                              fontWeight: 600
                             }}>
                               <span>{emojis[position]}</span>
                               <span>{position}S</span>
@@ -602,42 +582,44 @@ export default function WeeklyRankingsPage() {
                                 <div 
                                   key={idx} 
                                   style={{ 
-                                    marginBottom: '20px',
-                                    padding: '16px',
+                                    marginBottom: 'var(--spacing-md)',
+                                    padding: 'var(--spacing-md)',
                                     background: 'rgba(74, 111, 165, 0.05)',
-                                    borderRadius: '12px',
-                                    border: '1px solid var(--border-color)'
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--border-light)'
                                   }}
                                 >
-                                  <div style={{ marginBottom: '12px' }}>
+                                  <div style={{ marginBottom: 'var(--spacing-sm)' }}>
                                     <div style={{ 
-                                      fontSize: '0.75rem',
+                                      fontSize: '0.6875rem',
                                       color: 'var(--text-tertiary)',
-                                      marginBottom: '8px',
-                                      fontWeight: 600
+                                      marginBottom: 'var(--spacing-xs)',
+                                      fontWeight: 600,
+                                      textTransform: 'uppercase'
                                     }}>
                                       DROP:
                                     </div>
                                     {renderPlayerWithLogo(rec.drop)}
                                   </div>
-                                  <div style={{ marginBottom: '12px' }}>
+                                  <div style={{ marginBottom: 'var(--spacing-sm)' }}>
                                     <div style={{ 
-                                      fontSize: '0.75rem',
+                                      fontSize: '0.6875rem',
                                       color: 'var(--text-tertiary)',
-                                      marginBottom: '8px',
-                                      fontWeight: 600
+                                      marginBottom: 'var(--spacing-xs)',
+                                      fontWeight: 600,
+                                      textTransform: 'uppercase'
                                     }}>
                                       ADD:
                                     </div>
                                     {renderPlayerWithLogo(rec.add)}
                                   </div>
-                                  <div className="message message-success" style={{ marginTop: '12px', padding: '12px' }}>
+                                  <div className="message message-success" style={{ marginTop: 'var(--spacing-sm)', padding: 'var(--spacing-sm)', fontSize: '0.8125rem' }}>
                                     ⬆️ Improvement: <strong>+{rec.improvement} ranks</strong>
                                   </div>
                                 </div>
                               ))
                             ) : (
-                              <div className="message message-info" style={{ padding: '12px' }}>
+                              <div className="message message-info" style={{ padding: 'var(--spacing-sm)', fontSize: '0.8125rem' }}>
                                 No upgrades available
                               </div>
                             )}
@@ -647,19 +629,15 @@ export default function WeeklyRankingsPage() {
                     </div>
                     
                     <div>
-                      <div style={{
-                        background: 'var(--bg-card)',
-                        border: '1px solid var(--border-color)',
-                        borderRadius: '16px',
-                        padding: '24px'
-                      }}>
-                        <h4 style={{ marginBottom: '24px' }}>📈 Best Available Players</h4>
+                      <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
+                        <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', fontWeight: 600 }}>📈 Best Available Players</h4>
                         
-                        <div style={{ marginBottom: '32px' }}>
+                        <div style={{ marginBottom: 'var(--spacing-lg)' }}>
                           <h5 style={{ 
-                            marginBottom: '16px',
-                            fontSize: '1rem',
-                            color: 'var(--text-secondary)'
+                            marginBottom: 'var(--spacing-sm)',
+                            fontSize: '0.875rem',
+                            color: 'var(--text-secondary)',
+                            fontWeight: 600
                           }}>
                             ➖ DROP (Worst on Roster)
                           </h5>
@@ -669,47 +647,33 @@ export default function WeeklyRankingsPage() {
                               return (
                                 <div 
                                   key={idx} 
+                                  className="player-card"
                                   style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    gap: '12px', 
-                                    marginBottom: '12px',
-                                    padding: '12px',
                                     background: 'rgba(239, 68, 68, 0.05)',
-                                    borderRadius: '10px',
-                                    border: '1px solid rgba(239, 68, 68, 0.2)'
+                                    borderColor: 'rgba(239, 68, 68, 0.2)',
+                                    padding: 'var(--spacing-sm)'
                                   }}
                                 >
                                   {logoPath && (
-                                    <div style={{
-                                      width: '36px',
-                                      height: '36px',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      background: 'rgba(239, 68, 68, 0.1)',
-                                      borderRadius: '8px',
-                                      padding: '4px'
-                                    }}>
-                                      <Image src={logoPath} alt={player.team} width={28} height={28} />
+                                    <div className="player-logo-container" style={{ width: '32px', height: '32px' }}>
+                                      <Image src={logoPath} alt={player.team} width={24} height={24} />
                                     </div>
                                   )}
-                                  <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: 600, marginBottom: '4px' }}>
-                                      <span className={`position-tag ${player.position}`} style={{ marginRight: '8px' }}>
+                                  <div className="player-content">
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', flexWrap: 'wrap' }}>
+                                      <span className={`position-tag ${player.position}`}>
                                         {player.position}
                                       </span>
-                                      Rank #{player.rank}
-                                    </div>
-                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                                      {player.name} ({player.team})
+                                      <span className="badge">#{player.rank}</span>
+                                      <span style={{ fontSize: '0.8125rem', fontWeight: 600 }}>{player.name}</span>
+                                      <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>({player.team})</span>
                                     </div>
                                   </div>
                                 </div>
                               )
                             })
                           ) : (
-                            <div className="message message-info" style={{ padding: '12px' }}>
+                            <div className="message message-info" style={{ padding: 'var(--spacing-sm)', fontSize: '0.8125rem' }}>
                               No players to drop
                             </div>
                           )}
@@ -717,9 +681,10 @@ export default function WeeklyRankingsPage() {
                         
                         <div>
                           <h5 style={{ 
-                            marginBottom: '16px',
-                            fontSize: '1rem',
-                            color: 'var(--text-secondary)'
+                            marginBottom: 'var(--spacing-sm)',
+                            fontSize: '0.875rem',
+                            color: 'var(--text-secondary)',
+                            fontWeight: 600
                           }}>
                             ➕ ADD (Best Available)
                           </h5>
@@ -729,47 +694,33 @@ export default function WeeklyRankingsPage() {
                               return (
                                 <div 
                                   key={idx} 
+                                  className="player-card"
                                   style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    gap: '12px', 
-                                    marginBottom: '12px',
-                                    padding: '12px',
                                     background: 'rgba(16, 185, 129, 0.05)',
-                                    borderRadius: '10px',
-                                    border: '1px solid rgba(16, 185, 129, 0.2)'
+                                    borderColor: 'rgba(16, 185, 129, 0.2)',
+                                    padding: 'var(--spacing-sm)'
                                   }}
                                 >
                                   {logoPath && (
-                                    <div style={{
-                                      width: '36px',
-                                      height: '36px',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      background: 'rgba(16, 185, 129, 0.1)',
-                                      borderRadius: '8px',
-                                      padding: '4px'
-                                    }}>
-                                      <Image src={logoPath} alt={player.team} width={28} height={28} />
+                                    <div className="player-logo-container" style={{ width: '32px', height: '32px' }}>
+                                      <Image src={logoPath} alt={player.team} width={24} height={24} />
                                     </div>
                                   )}
-                                  <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: 600, marginBottom: '4px' }}>
-                                      <span className={`position-tag ${player.position}`} style={{ marginRight: '8px' }}>
+                                  <div className="player-content">
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', flexWrap: 'wrap' }}>
+                                      <span className={`position-tag ${player.position}`}>
                                         {player.position}
                                       </span>
-                                      Rank #{player.rank}
-                                    </div>
-                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                                      {player.name} ({player.team})
+                                      <span className="badge">#{player.rank}</span>
+                                      <span style={{ fontSize: '0.8125rem', fontWeight: 600 }}>{player.name}</span>
+                                      <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>({player.team})</span>
                                     </div>
                                   </div>
                                 </div>
                               )
                             })
                           ) : (
-                            <div className="message message-info" style={{ padding: '12px' }}>
+                            <div className="message message-info" style={{ padding: 'var(--spacing-sm)', fontSize: '0.8125rem' }}>
                               No free agents found
                             </div>
                           )}
