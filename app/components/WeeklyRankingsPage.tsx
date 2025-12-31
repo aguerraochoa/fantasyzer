@@ -16,6 +16,7 @@ export default function WeeklyRankingsPage() {
   const [optimalAnalysis, setOptimalAnalysis] = useState<any>(null)
   const [rosAnalysis, setRosAnalysis] = useState<any>(null)
   const [rosterSettings, setRosterSettings] = useState<Record<string, number>>({})
+  const [activeTab, setActiveTab] = useState<string>('start-sit')
 
   const getTeamLogoPath = (teamAbbrev: string): string | null => {
     if (!teamAbbrev) return null
@@ -232,12 +233,6 @@ export default function WeeklyRankingsPage() {
           </div>
         )}
 
-        {loading && (
-          <div className="loading-overlay">
-            <div className="spinner"></div>
-          </div>
-        )}
-
         <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 'var(--spacing-2xl)', marginTop: 'var(--spacing-xl)' }}>
           {/* Sidebar */}
           <aside className="sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
@@ -302,8 +297,11 @@ export default function WeeklyRankingsPage() {
 
           {/* Main Content */}
           <main>
-            <h1 className="app-title">Weekly Rankings</h1>
-            <p className="app-caption">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-sm)' }}>
+              <h1 className="app-title" style={{ margin: 0 }}>Weekly Rankings</h1>
+              {loading && <div className="spinner-small"></div>}
+            </div>
+            <p className="app-caption" style={{ marginBottom: 'var(--spacing-2xl)' }}>
               Get start/sit recommendations and waiver wire suggestions for your leagues.
             </p>
 
@@ -319,18 +317,21 @@ export default function WeeklyRankingsPage() {
             <>
               <div style={{
                 background: 'var(--bg-card)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '16px',
-                padding: '24px',
-                marginBottom: '32px'
+                border: '1px solid var(--border-light)',
+                borderRadius: 'var(--radius-lg)',
+                padding: 'var(--spacing-md) var(--spacing-lg)',
+                marginBottom: 'var(--spacing-lg)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 'var(--spacing-md)'
               }}>
                 <h3 style={{ 
-                  fontSize: '1.5rem',
-                  marginBottom: '8px',
-                  background: 'var(--gradient-primary)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
+                  fontSize: '1.125rem',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  margin: 0
                 }}>
                   {selectedLeague.name}
                 </h3>
@@ -338,11 +339,24 @@ export default function WeeklyRankingsPage() {
                   <div style={{ 
                     display: 'flex',
                     flexWrap: 'wrap',
-                    gap: '12px',
-                    marginTop: '12px'
+                    gap: 'var(--spacing-xs)',
+                    alignItems: 'center'
                   }}>
                     {Object.entries(rosterSettings).map(([pos, count]) => (
-                      <span key={pos} className="badge">
+                      <span 
+                        key={pos} 
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          padding: '0.25rem 0.625rem',
+                          fontSize: '0.75rem',
+                          fontWeight: 500,
+                          borderRadius: 'var(--radius-sm)',
+                          background: 'rgba(74, 111, 165, 0.08)',
+                          color: 'var(--accent-primary)',
+                          border: '1px solid rgba(74, 111, 165, 0.15)'
+                        }}
+                      >
                         {pos}: {count}
                       </span>
                     ))}
@@ -350,182 +364,205 @@ export default function WeeklyRankingsPage() {
                 )}
               </div>
 
-              {analysis && (
+              {(analysis || optimalAnalysis || rosAnalysis) && (
                 <>
-                  <div className="section-title">🎯 Start/Sit Recommendations</div>
-                  
-                  <div style={{ marginTop: 'var(--spacing-md)' }}>
-                    {analysis.starters && analysis.starters.length > 0 && (
-                      <div className="card" style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-lg)' }}>
+                  <div className="tabs">
+                    {analysis && (
+                      <button
+                        className={`tab ${activeTab === 'start-sit' ? 'tab-active' : ''}`}
+                        onClick={() => setActiveTab('start-sit')}
+                      >
+                        Start/Sit
+                      </button>
+                    )}
+                    {optimalAnalysis && optimalAnalysis.optimal_starters && (
+                      <button
+                        className={`tab ${activeTab === 'optimal' ? 'tab-active' : ''}`}
+                        onClick={() => setActiveTab('optimal')}
+                      >
+                        Optimal Lineup
+                      </button>
+                    )}
+                    {rosAnalysis && (
+                      <button
+                        className={`tab ${activeTab === 'ros' ? 'tab-active' : ''}`}
+                        onClick={() => setActiveTab('ros')}
+                      >
+                        ROS Upgrades
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Start/Sit Tab */}
+                  {analysis && (
+                    <div className={`tab-content ${activeTab === 'start-sit' ? 'tab-content-active' : ''}`}>
+                      {analysis.starters && analysis.starters.length > 0 && (
+                        <div className="card" style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-lg)' }}>
+                          <h4 style={{ 
+                            marginBottom: 'var(--spacing-md)',
+                            fontSize: '1rem',
+                            fontWeight: 600
+                          }}>
+                            ✅ Recommended Starting Lineup
+                          </h4>
+                          {analysis.starters.map((player: any, idx: number) => {
+                            const positionDisplay = player.position_with_rank || player.position
+                            const waiverIndicator = player.is_waiver_wire ? ' (Free Agent)' : ''
+                            const rosterSlot = player.flex_slot || player.position
+                            const slotLabel = ['SUPER_FLEX', 'FLEX', 'WRRBTE_FLEX', 'WRRB_FLEX'].includes(rosterSlot) ? 'FLEX' : rosterSlot
+                            
+                            return (
+                              <div key={idx}>
+                                {renderPlayerWithLogo(player, slotLabel, waiverIndicator)}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                      
+                      {analysis.bench && analysis.bench.length > 0 && (
+                        <div className="card" style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-lg)' }}>
+                          <h4 style={{ 
+                            marginBottom: 'var(--spacing-md)',
+                            fontSize: '1rem',
+                            fontWeight: 600
+                          }}>
+                            🪑 Bench Players
+                          </h4>
+                          {analysis.bench.map((player: any, idx: number) => {
+                            const positionDisplay = player.position_with_rank || player.position
+                            return (
+                              <div key={idx}>
+                                {renderPlayerWithLogo({...player, position_with_rank: positionDisplay}, 'BN')}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                      
+                      <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
                         <h4 style={{ 
                           marginBottom: 'var(--spacing-md)',
                           fontSize: '1rem',
                           fontWeight: 600
                         }}>
-                          ✅ Recommended Starting Lineup
+                          💡 Waiver Wire Suggestions
                         </h4>
-                        {analysis.starters.map((player: any, idx: number) => {
+                        
+                        {rosterSettings.DEF > 0 && analysis.waiver_suggestions?.defenses && (
+                          <>
+                            <h5 style={{ 
+                              marginBottom: 'var(--spacing-sm)',
+                              fontSize: '0.875rem',
+                              color: 'var(--text-secondary)',
+                              fontWeight: 600
+                            }}>
+                              Top 5 Defenses
+                            </h5>
+                            {analysis.waiver_suggestions.defenses.slice(0, 5).map((defense: any, idx: number) => {
+                              const status = defense.is_on_roster ? 'On Your Roster' : 'Free Agent'
+                              return (
+                                <div key={idx}>
+                                  {renderPlayerWithLogo({...defense, position: 'DEF'}, 'DEF', ` (${status})`)}
+                                </div>
+                              )
+                            })}
+                          </>
+                        )}
+                        
+                        {rosterSettings.K > 0 && analysis.waiver_suggestions?.kickers && (
+                          <>
+                            <h5 style={{ 
+                              marginTop: 'var(--spacing-md)',
+                              marginBottom: 'var(--spacing-sm)',
+                              fontSize: '0.875rem',
+                              color: 'var(--text-secondary)',
+                              fontWeight: 600
+                            }}>
+                              Top 5 Kickers
+                            </h5>
+                            {analysis.waiver_suggestions.kickers.slice(0, 5).map((kicker: any, idx: number) => {
+                              const status = kicker.is_on_roster ? 'On Your Roster' : 'Free Agent'
+                              return (
+                                <div key={idx}>
+                                  {renderPlayerWithLogo({...kicker, position: 'K'}, 'K', ` (${status})`)}
+                                </div>
+                              )
+                            })}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Optimal Lineup Tab */}
+                  {optimalAnalysis && optimalAnalysis.optimal_starters && (
+                    <div className={`tab-content ${activeTab === 'optimal' ? 'tab-content-active' : ''}`}>
+                      <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
+                        <h4 style={{ 
+                          marginBottom: 'var(--spacing-md)',
+                          fontSize: '1rem',
+                          fontWeight: 600
+                        }}>
+                          🎯 Optimal Starting Lineup (Including Best Available Free Agents)
+                        </h4>
+                        {optimalAnalysis.optimal_starters.map((player: any, idx: number) => {
                           const positionDisplay = player.position_with_rank || player.position
-                          const waiverIndicator = player.is_waiver_wire ? ' (Free Agent)' : ''
                           const rosterSlot = player.flex_slot || player.position
                           const slotLabel = ['SUPER_FLEX', 'FLEX', 'WRRBTE_FLEX', 'WRRB_FLEX'].includes(rosterSlot) ? 'FLEX' : rosterSlot
                           
-                          return (
-                            <div key={idx}>
-                              {renderPlayerWithLogo(player, slotLabel, waiverIndicator)}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
-                    
-                    {analysis.bench && analysis.bench.length > 0 && (
-                      <div className="card" style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-lg)' }}>
-                        <h4 style={{ 
-                          marginBottom: 'var(--spacing-md)',
-                          fontSize: '1rem',
-                          fontWeight: 600
-                        }}>
-                          🪑 Bench Players
-                        </h4>
-                        {analysis.bench.map((player: any, idx: number) => {
-                          const positionDisplay = player.position_with_rank || player.position
-                          return (
-                            <div key={idx}>
-                              {renderPlayerWithLogo({...player, position_with_rank: positionDisplay}, 'BN')}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
-                    
-                    <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-                      <h4 style={{ 
-                        marginBottom: 'var(--spacing-md)',
-                        fontSize: '1rem',
-                        fontWeight: 600
-                      }}>
-                        💡 Waiver Wire Suggestions
-                      </h4>
-                      
-                      {rosterSettings.DEF > 0 && analysis.waiver_suggestions?.defenses && (
-                        <>
-                          <h5 style={{ 
-                            marginBottom: 'var(--spacing-sm)',
-                            fontSize: '0.875rem',
-                            color: 'var(--text-secondary)',
-                            fontWeight: 600
-                          }}>
-                            Top 5 Defenses
-                          </h5>
-                          {analysis.waiver_suggestions.defenses.slice(0, 5).map((defense: any, idx: number) => {
-                            const status = defense.is_on_roster ? 'On Your Roster' : 'Free Agent'
+                          if (player.is_free_agent) {
+                            const currentPlayer = player.replaces_player
+                            const upgradeInfo = currentPlayer 
+                              ? `   ↳ Upgrade from: ${currentPlayer.name} (Rank #${currentPlayer.rank}) - Improvement: +${currentPlayer.rank - player.rank} ranks`
+                              : undefined
                             return (
                               <div key={idx}>
-                                {renderPlayerWithLogo({...defense, position: 'DEF'}, 'DEF', ` (${status})`)}
+                                {renderPlayerWithLogo({...player, name: `🔄 ${player.name}`}, slotLabel, undefined, true, upgradeInfo)}
                               </div>
                             )
-                          })}
-                        </>
-                      )}
-                      
-                      {rosterSettings.K > 0 && analysis.waiver_suggestions?.kickers && (
-                        <>
-                          <h5 style={{ 
-                            marginTop: 'var(--spacing-md)',
-                            marginBottom: 'var(--spacing-sm)',
-                            fontSize: '0.875rem',
-                            color: 'var(--text-secondary)',
-                            fontWeight: 600
-                          }}>
-                            Top 5 Kickers
-                          </h5>
-                          {analysis.waiver_suggestions.kickers.slice(0, 5).map((kicker: any, idx: number) => {
-                            const status = kicker.is_on_roster ? 'On Your Roster' : 'Free Agent'
+                          } else {
                             return (
                               <div key={idx}>
-                                {renderPlayerWithLogo({...kicker, position: 'K'}, 'K', ` (${status})`)}
+                                {renderPlayerWithLogo(player, slotLabel)}
                               </div>
                             )
-                          })}
-                        </>
-                      )}
+                          }
+                        })}
+                        
+                        {optimalAnalysis.free_agent_upgrades && optimalAnalysis.free_agent_upgrades.length > 0 && (
+                          <div style={{ marginTop: 'var(--spacing-lg)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-light)' }}>
+                            <h4 style={{ marginBottom: 'var(--spacing-sm)', fontSize: '0.9375rem', fontWeight: 600 }}>📈 Free Agent Upgrade Summary</h4>
+                            <div className="message message-success" style={{ marginBottom: 'var(--spacing-md)', padding: 'var(--spacing-sm)' }}>
+                              🚀 <strong>{optimalAnalysis.free_agent_upgrades.length} potential upgrade(s)</strong> with{' '}
+                              <strong>+{optimalAnalysis.free_agent_upgrades.reduce((sum: number, u: any) => sum + u.improvement, 0)} total rank improvement</strong>
+                            </div>
+                            {optimalAnalysis.free_agent_upgrades.map((upgrade: any, idx: number) => (
+                              <div 
+                                key={idx} 
+                                style={{ 
+                                  marginBottom: 'var(--spacing-sm)',
+                                  padding: 'var(--spacing-sm)',
+                                  background: 'rgba(74, 111, 165, 0.05)',
+                                  borderRadius: 'var(--radius-md)',
+                                  border: '1px solid var(--border-light)',
+                                  fontSize: '0.875rem'
+                                }}
+                              >
+                                <strong>{upgrade.position}</strong>: {upgrade.add.name} (#{upgrade.add.rank}) replaces {upgrade.drop.name} (#{upgrade.drop.rank}) - <strong style={{ color: 'var(--accent-success)' }}>+{upgrade.improvement} ranks</strong>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  )}
 
-              {optimalAnalysis && optimalAnalysis.optimal_starters && (
-                <>
-                  <div className="section-title">⭐ Optimal Starting Lineup</div>
-                  
-                  <div className="card" style={{ padding: 'var(--spacing-lg)', marginTop: 'var(--spacing-md)' }}>
-                    <h4 style={{ 
-                      marginBottom: 'var(--spacing-md)',
-                      fontSize: '1rem',
-                      fontWeight: 600
-                    }}>
-                      🎯 Optimal Starting Lineup (Including Best Available Free Agents)
-                    </h4>
-                    {optimalAnalysis.optimal_starters.map((player: any, idx: number) => {
-                      const positionDisplay = player.position_with_rank || player.position
-                      const rosterSlot = player.flex_slot || player.position
-                      const slotLabel = ['SUPER_FLEX', 'FLEX', 'WRRBTE_FLEX', 'WRRB_FLEX'].includes(rosterSlot) ? 'FLEX' : rosterSlot
-                      
-                      if (player.is_free_agent) {
-                        const currentPlayer = player.replaces_player
-                        const upgradeInfo = currentPlayer 
-                          ? `   ↳ Upgrade from: ${currentPlayer.name} (Rank #${currentPlayer.rank}) - Improvement: +${currentPlayer.rank - player.rank} ranks`
-                          : undefined
-                        return (
-                          <div key={idx}>
-                            {renderPlayerWithLogo({...player, name: `🔄 ${player.name}`}, slotLabel, undefined, true, upgradeInfo)}
-                          </div>
-                        )
-                      } else {
-                        return (
-                          <div key={idx}>
-                            {renderPlayerWithLogo(player, slotLabel)}
-                          </div>
-                        )
-                      }
-                    })}
-                    
-                    {optimalAnalysis.free_agent_upgrades && optimalAnalysis.free_agent_upgrades.length > 0 && (
-                      <div style={{ marginTop: 'var(--spacing-lg)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-light)' }}>
-                        <h4 style={{ marginBottom: 'var(--spacing-sm)', fontSize: '0.9375rem', fontWeight: 600 }}>📈 Free Agent Upgrade Summary</h4>
-                        <div className="message message-success" style={{ marginBottom: 'var(--spacing-md)', padding: 'var(--spacing-sm)' }}>
-                          🚀 <strong>{optimalAnalysis.free_agent_upgrades.length} potential upgrade(s)</strong> with{' '}
-                          <strong>+{optimalAnalysis.free_agent_upgrades.reduce((sum: number, u: any) => sum + u.improvement, 0)} total rank improvement</strong>
-                        </div>
-                        {optimalAnalysis.free_agent_upgrades.map((upgrade: any, idx: number) => (
-                          <div 
-                            key={idx} 
-                            style={{ 
-                              marginBottom: 'var(--spacing-sm)',
-                              padding: 'var(--spacing-sm)',
-                              background: 'rgba(74, 111, 165, 0.05)',
-                              borderRadius: 'var(--radius-md)',
-                              border: '1px solid var(--border-light)',
-                              fontSize: '0.875rem'
-                            }}
-                          >
-                            <strong>{upgrade.position}</strong>: {upgrade.add.name} (#{upgrade.add.rank}) replaces {upgrade.drop.name} (#{upgrade.drop.rank}) - <strong style={{ color: 'var(--accent-success)' }}>+{upgrade.improvement} ranks</strong>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-
-              {rosAnalysis && (
-                <>
-                  <div className="section-title">🔄 ROS Upgrade Recommendations</div>
-                  
-                  <div style={{ marginTop: 'var(--spacing-md)' }}>
-                    <div className="card" style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-lg)' }}>
-                      <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', fontWeight: 600 }}>📍 Position-Specific Upgrades</h4>
+                  {/* ROS Upgrades Tab */}
+                  {rosAnalysis && (
+                    <div className={`tab-content ${activeTab === 'ros' ? 'tab-content-active' : ''}`}>
+                      <div className="card" style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-lg)' }}>
+                        <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', fontWeight: 600 }}>📍 Position-Specific Upgrades</h4>
                       {['QB', 'RB', 'WR', 'TE'].map((position) => {
                         const recommendations = rosAnalysis.position_recommendations?.[position] || []
                         const emojis: Record<string, string> = {'QB': '🎯', 'RB': '🏈', 'WR': '⚡', 'TE': '🎪'}
@@ -690,8 +727,9 @@ export default function WeeklyRankingsPage() {
                             </div>
                           )}
                         </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </>
               )}
             </>

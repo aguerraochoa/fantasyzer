@@ -157,12 +157,6 @@ export default function DraftAssistantPage() {
           </div>
         )}
 
-        {loading && (
-          <div className="loading-overlay">
-            <div className="spinner"></div>
-          </div>
-        )}
-
         <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 'var(--spacing-2xl)', marginTop: 'var(--spacing-xl)' }}>
           {/* Sidebar */}
           <aside className="sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
@@ -303,8 +297,11 @@ export default function DraftAssistantPage() {
 
           {/* Main Content */}
           <main>
-            <h1 className="app-title">Draft Assistant</h1>
-            <p className="app-caption">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-sm)' }}>
+              <h1 className="app-title" style={{ margin: 0 }}>Draft Assistant</h1>
+              {loading && <div className="spinner-small"></div>}
+            </div>
+            <p className="app-caption" style={{ marginBottom: 'var(--spacing-2xl)' }}>
               Load FantasyPros rankings and manage multiple fantasy leagues with Sleeper integration.
             </p>
 
