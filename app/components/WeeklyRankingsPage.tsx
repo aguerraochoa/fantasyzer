@@ -222,109 +222,97 @@ export default function WeeklyRankingsPage() {
   }
 
   return (
-    <div className="flex">
-      <aside className="sidebar">
-        <h2 style={{ marginBottom: '24px', fontSize: '1.5rem' }}>⚙️ Setup</h2>
-        
-        <div style={{ marginBottom: '32px' }}>
-          <h3 style={{ fontSize: '1.125rem', marginBottom: '12px', color: 'var(--text-secondary)' }}>
-            🏈 Discover Your Leagues
-          </h3>
-          <input
-            type="text"
-            className="input"
-            placeholder="your_username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={{ marginBottom: '12px' }}
-          />
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
-            Season: {new Date().getFullYear()}
-          </p>
-          
-          <button 
-            className="btn btn-primary" 
-            onClick={handleFindLeagues}
-            disabled={loading || !username.trim()}
-            style={{ width: '100%', justifyContent: 'center' }}
-          >
-            <span>🔎</span>
-            <span>Find my leagues</span>
-          </button>
-        </div>
-
-        {discoveredLeagues.length > 0 && (
-          <div style={{ marginTop: '20px' }}>
-            <p style={{ 
-              fontSize: '0.875rem', 
-              color: 'var(--text-secondary)', 
-              marginBottom: '12px',
-              fontWeight: 600
-            }}>
-              Your Leagues:
-            </p>
-            {discoveredLeagues.map((league) => (
-              <button
-                key={league.id}
-                className="btn"
-                onClick={() => handleSelectLeague(league)}
-                style={{ 
-                  width: '100%',
-                  marginBottom: '8px',
-                  justifyContent: 'flex-start',
-                  padding: '12px 16px'
-                }}
-              >
-                <span>🏈</span>
-                <span>{league.name}</span>
-              </button>
-            ))}
+    <div>
+      <Navigation />
+      
+      <div className="container" style={{ paddingTop: 'var(--spacing-2xl)', paddingBottom: 'var(--spacing-2xl)' }}>
+        {error && (
+          <div className="message message-error">
+            <span>{error}</span>
           </div>
         )}
-      </aside>
-
-      <main className="main-content">
-        <Navigation />
-        
-        <div className="container">
-          {error && (
-            <div className="message message-error">
-              <span>❌</span>
-              <span>{error}</span>
-            </div>
-          )}
-          {success && (
-            <div className="message message-success">
-              <span>{success}</span>
-            </div>
-          )}
-          {loading && <div className="spinner"></div>}
-
-          <div className="app-title">Weekly Rankings</div>
-          <div className="app-caption">
-            Get start/sit recommendations and waiver wire suggestions for your leagues.
+        {success && (
+          <div className="message message-success">
+            <span>{success}</span>
           </div>
+        )}
+        {loading && <div className="spinner"></div>}
 
-          {!selectedLeague ? (
-            <div 
-              className="message message-info"
-              style={{ 
-                padding: '48px',
-                textAlign: 'center',
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '16px',
-                maxWidth: '600px',
-                margin: '0 auto'
-              }}
-            >
-              <div style={{ fontSize: '4rem', marginBottom: '24px' }}>👈</div>
-              <h3 style={{ marginBottom: '16px', fontSize: '1.5rem' }}>Discover Your Leagues</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>
-                Use the sidebar to enter your Sleeper username and discover your leagues.
+        <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 'var(--spacing-2xl)', marginTop: 'var(--spacing-xl)' }}>
+          {/* Sidebar */}
+          <aside className="sidebar" style={{ position: 'sticky', top: '80px', alignSelf: 'start' }}>
+            <h3 style={{ marginBottom: 'var(--spacing-lg)', fontSize: '1.25rem' }}>Setup</h3>
+            
+            <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+              <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>
+                Discover Your Leagues
+              </h4>
+              <input
+                type="text"
+                className="input"
+                placeholder="your_username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                style={{ marginBottom: 'var(--spacing-sm)' }}
+              />
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 'var(--spacing-md)' }}>
+                Season: {new Date().getFullYear()}
               </p>
+              
+              <button 
+                className="btn btn-primary" 
+                onClick={handleFindLeagues}
+                disabled={loading || !username.trim()}
+                style={{ width: '100%' }}
+              >
+                Find my leagues
+              </button>
             </div>
-          ) : (
+
+            {discoveredLeagues.length > 0 && (
+              <div>
+                <p style={{ 
+                  fontSize: '0.875rem', 
+                  color: 'var(--text-secondary)', 
+                  marginBottom: 'var(--spacing-md)',
+                  fontWeight: 500
+                }}>
+                  Your Leagues:
+                </p>
+                {discoveredLeagues.map((league) => (
+                  <button
+                    key={league.id}
+                    className="btn"
+                    onClick={() => handleSelectLeague(league)}
+                    style={{ 
+                      width: '100%',
+                      marginBottom: 'var(--spacing-xs)',
+                      justifyContent: 'flex-start'
+                    }}
+                  >
+                    {league.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </aside>
+
+          {/* Main Content */}
+          <main>
+            <h1 className="app-title">Weekly Rankings</h1>
+            <p className="app-caption">
+              Get start/sit recommendations and waiver wire suggestions for your leagues.
+            </p>
+
+            {!selectedLeague ? (
+              <div className="card" style={{ textAlign: 'center', padding: 'var(--spacing-2xl)', maxWidth: '600px' }}>
+                <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-lg)' }}>👈</div>
+                <h3 style={{ marginBottom: 'var(--spacing-md)' }}>Discover Your Leagues</h3>
+                <p style={{ color: 'var(--text-secondary)' }}>
+                  Use the sidebar to enter your Sleeper username and discover your leagues.
+                </p>
+              </div>
+            ) : (
             <>
               <div style={{
                 background: 'var(--bg-card)',
@@ -792,9 +780,10 @@ export default function WeeklyRankingsPage() {
                 </>
               )}
             </>
-          )}
+            )}
+          </main>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

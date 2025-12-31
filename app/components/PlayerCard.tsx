@@ -98,7 +98,15 @@ export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCard
         <div className="player-name">
           {index !== undefined && <span className="num-badge">{index}</span>}
           <span>{player.name}</span>
-          <span className="player-team">{player.team}</span>
+          {player.team && (
+            <span style={{ 
+              color: 'var(--text-tertiary)',
+              fontSize: '0.875rem',
+              fontWeight: 400
+            }}>
+              {player.team}
+            </span>
+          )}
           {player.position && (
             <span className={`position-tag ${getPositionColor(player.position)}`}>
               {player.position}
@@ -118,7 +126,14 @@ export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCard
           )}
         </div>
         {injury && (
-          <div className="player-injury">{injury}</div>
+          <div style={{ 
+            marginTop: '0.5rem',
+            fontSize: '0.875rem',
+            color: 'var(--accent-error)',
+            fontWeight: 500
+          }}>
+            ⚠️ {injury}
+          </div>
         )}
       </div>
     </div>
