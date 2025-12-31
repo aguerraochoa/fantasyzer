@@ -10,12 +10,14 @@ export default function WeeklyRankingsPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [discoveredLeagues, setDiscoveredLeagues] = useState<Array<{name: string, id: string, userId: string}>>([])
+  const [hasSearched, setHasSearched] = useState(false)
   const [selectedLeague, setSelectedLeague] = useState<{name: string, id: string, userId: string} | null>(null)
   const [analysis, setAnalysis] = useState<any>(null)
   const [optimalAnalysis, setOptimalAnalysis] = useState<any>(null)
   const [rosAnalysis, setRosAnalysis] = useState<any>(null)
   const [rosterSettings, setRosterSettings] = useState<Record<string, number>>({})
   const [activeTab, setActiveTab] = useState<string>('start-sit')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const getTeamLogoPath = (teamAbbrev: string): string | null => {
     if (!teamAbbrev) return null
@@ -65,6 +67,7 @@ export default function WeeklyRankingsPage() {
     
     setLoading(true)
     setError(null)
+    setHasSearched(true)
     
     try {
       const response = await getUserLeagues(username.trim())
@@ -80,6 +83,7 @@ export default function WeeklyRankingsPage() {
       }
     } catch (err: any) {
       setError(err.message || 'Failed to find leagues')
+      setDiscoveredLeagues([])
     } finally {
       setLoading(false)
     }
@@ -226,6 +230,48 @@ export default function WeeklyRankingsPage() {
           </div>
         )}
 
+        {/* Mobile Menu Button */}
+        <button
+          className="mobile-menu-btn"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          style={{
+            display: 'none',
+            position: 'fixed',
+            top: '80px',
+            right: 'var(--spacing-md)',
+            zIndex: 1001,
+            background: 'var(--accent-primary)',
+            color: 'white',
+            border: 'none',
+            borderRadius: 'var(--radius-md)',
+            padding: 'var(--spacing-sm) var(--spacing-md)',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            boxShadow: 'var(--shadow-md)'
+          }}
+        >
+          {mobileMenuOpen ? '✕ Close' : '☰ Setup'}
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div
+            className="mobile-menu-overlay"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              display: 'none',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 999
+            }}
+          />
+        )}
+
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: '320px 1fr', 
@@ -233,7 +279,7 @@ export default function WeeklyRankingsPage() {
           marginTop: 'var(--spacing-xl)'
         }} className="main-layout">
           {/* Sidebar */}
-          <aside className="sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
+          <aside className={`sidebar mobile-sidebar ${mobileMenuOpen ? 'mobile-sidebar-open' : ''}`} style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-lg)' }}>
               <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>League Setup</h3>
               {loading && <div className="spinner-small"></div>}
@@ -302,7 +348,7 @@ export default function WeeklyRankingsPage() {
                   borderRadius: 'var(--radius-md)',
                   border: '1px solid var(--border-light)'
                 }}>
-                  {username.trim() ? 'No leagues found' : 'Enter your username and click "Find my leagues"'}
+                  {hasSearched ? 'No leagues found' : 'Enter your username and click "Find my leagues"'}
                 </div>
               )}
             </div>
