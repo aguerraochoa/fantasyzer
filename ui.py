@@ -49,227 +49,181 @@ def inject_css() -> None:
     st.markdown(
         """
         <style>
-        /* App background and sidebar (dark) */
-        [data-testid="stAppViewContainer"] { background: #0f172a; color: #e2e8f0; }
+        /* App background and sidebar (white) */
+        [data-testid="stAppViewContainer"] { background: #ffffff; color: #1f2937; }
         [data-testid="stHeader"] { background: transparent; }
-        [data-testid="stSidebar"] { background: #0b1220; }
-        /* Global text set to white for readability */
+        [data-testid="stSidebar"] { background: #f9fafb; }
+        /* Global text set to dark for readability on white */
         body, .stApp, .stMarkdown, .stText, .stCaption, p, span, label,
         [data-testid="stWidgetLabel"], [data-baseweb="toggle"] label,
         [data-baseweb="select"] label, [data-testid="stSidebar"] * {
-            color: #ffffff !important;
+            color: #1f2937 !important;
         }
-        /* Inputs on dark background */
+        /* Inputs on white background */
         .stTextInput input, .stTextArea textarea, .stTextInput > div > div > input {
-            background: #111827 !important;
-            color: #ffffff !important;
-            border: 1px solid #334155 !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
         }
         /* Number input (Season year) */
         .stNumberInput input, [data-testid="stNumberInput"] input, input[type="number"] {
-            background: #111827 !important;
-            color: #ffffff !important;
-            border: 1px solid #334155 !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
         }
         .stTextInput input::placeholder, .stTextArea textarea::placeholder {
-            color: #ffffff !important;
-            opacity: 0.85;
+            color: #6b7280 !important;
+            opacity: 0.8;
         }
-        /* Buttons: default like hover (dark), with lighter hover */
+        /* Buttons: light theme */
         .stButton > button {
-            background: #1f2937 !important; /* hover look as default */
-            color: #ffffff !important;
-            border: 1px solid #334155 !important;
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
             border-radius: 12px !important;
             box-shadow: none !important;
             transition: background 120ms ease, border-color 120ms ease, transform 60ms ease;
         }
         .stButton > button:hover {
-            background: #263244 !important; /* slightly lighter on hover */
-            border-color: #3b4456 !important;
+            background: #e5e7eb !important;
+            border-color: #9ca3af !important;
         }
         .stButton > button:active {
             transform: translateY(1px);
         }
         /* Ensure sidebar buttons match */
         [data-testid="stSidebar"] .stButton > button {
-            background: #1f2937 !important;
-            color: #ffffff !important;
-            border: 1px solid #334155 !important;
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
         }
-        /* Form submit buttons - darker theme */
+        /* Form submit buttons - light theme */
         .stFormSubmitButton > button {
-            background: #0f172a !important;
-            color: #e5e7eb !important;
-            border: 1px solid #475569 !important;
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
             border-radius: 8px !important;
         }
         .stFormSubmitButton > button:hover {
-            background: #1e293b !important;
-            border-color: #64748b !important;
+            background: #e5e7eb !important;
+            border-color: #9ca3af !important;
         }
-        /* Download buttons - darker theme */
+        /* Download buttons - light theme */
         .stDownloadButton > button {
-            background: #0f172a !important;
-            color: #e5e7eb !important;
-            border: 1px solid #475569 !important;
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
             border-radius: 8px !important;
         }
         .stDownloadButton > button:hover {
-            background: #1e293b !important;
-            border-color: #64748b !important;
+            background: #e5e7eb !important;
+            border-color: #9ca3af !important;
         }
-        /* Selectbox styling - dark theme */
+        /* Selectbox styling - light theme */
         .stSelectbox > div > div {
-            background: #0f172a !important;
-            border: 1px solid #475569 !important;
-            color: #e5e7eb !important;
+            background: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            color: #1f2937 !important;
         }
         .stSelectbox > div > div:hover {
-            border-color: #64748b !important;
+            border-color: #9ca3af !important;
         }
         .stSelectbox > div > div > div {
-            background: #0f172a !important;
-            color: #e5e7eb !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
         }
         /* Fix selectbox text color */
         .stSelectbox > div > div > div > div {
-            color: #e5e7eb !important;
-            background: #0f172a !important;
+            color: #1f2937 !important;
+            background: #ffffff !important;
         }
         /* Fix selectbox placeholder and selected text */
         .stSelectbox input, .stSelectbox select {
-            color: #e5e7eb !important;
-            background: #0f172a !important;
-        }
-        /* Fix input field placeholder text color */
-        .stTextInput input::placeholder {
-            color: #9ca3af !important;
-            opacity: 0.8 !important;
-        }
-        .stTextInput input {
-            color: #e5e7eb !important;
-            background: #0f172a !important;
+            color: #1f2937 !important;
+            background: #ffffff !important;
         }
         /* Ensure dropdown options are visible */
         .stSelectbox [role="listbox"] {
-            background: #0f172a !important;
-            color: #e5e7eb !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
         }
         .stSelectbox [role="option"] {
-            background: #0f172a !important;
-            color: #e5e7eb !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
         }
         .stSelectbox [role="option"]:hover {
-            background: #1e293b !important;
+            background: #f3f4f6 !important;
         }
-        /* Target all selectbox elements to remove white backgrounds */
+        /* Target all selectbox elements */
         .stSelectbox * {
-            background: #0f172a !important;
+            background: #ffffff !important;
         }
-        /* Main selector text should be light */
+        /* Main selector text */
         .stSelectbox > div > div > div > div {
-            color: #e5e7eb !important;
+            color: #1f2937 !important;
         }
         /* Specific targeting for the selected option display */
         .stSelectbox > div > div > div > div > div {
-            background: #0f172a !important;
-            color: #e5e7eb !important;
-        }
-        /* Target any remaining white backgrounds in selectbox */
-        .stSelectbox div[style*="background"] {
-            background: #0f172a !important;
-        }
-        .stSelectbox div[style*="white"] {
-            background: #0f172a !important;
-        }
-        /* Force override any white backgrounds with !important */
-        .stSelectbox div[style*="background-color: white"] {
-            background-color: #0f172a !important;
-        }
-        .stSelectbox div[style*="background: white"] {
-            background: #0f172a !important;
-        }
-        /* Target the specific dropdown option that's showing white */
-        .stSelectbox > div > div > div > div > div[style*="background"] {
-            background: #0f172a !important;
-        }
-        /* Override any remaining white backgrounds */
-        .stSelectbox div {
-            background: #0f172a !important;
-        }
-        /* Ensure text remains visible */
-        .stSelectbox div {
-            color: #e5e7eb !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
         }
         /* Target the dropdown list container specifically */
         .stSelectbox [data-baseweb="popover"] {
-            background: #0f172a !important;
+            background: #ffffff !important;
         }
         .stSelectbox [data-baseweb="popover"] * {
-            background: #0f172a !important;
-            color: #000000 !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
         }
         /* Target any popover or dropdown containers */
         .stSelectbox [role="listbox"], .stSelectbox [role="menu"] {
-            background: #0f172a !important;
+            background: #ffffff !important;
         }
         .stSelectbox [role="listbox"] *, .stSelectbox [role="menu"] * {
-            background: #0f172a !important;
-            color: #000000 !important;
-        }
-        /* Force override any remaining white backgrounds */
-        .stSelectbox *[style*="white"] {
-            background: #0f172a !important;
-        }
-        .stSelectbox *[style*="background"] {
-            background: #0f172a !important;
-        }
-        /* Target the specific dropdown that's showing white */
-        .stSelectbox > div > div > div > div > div > div {
-            background: #0f172a !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
         }
         /* Override any Streamlit-specific dropdown styling */
         .stSelectbox [data-testid="stSelectbox"] {
-            background: #0f172a !important;
+            background: #ffffff !important;
         }
         .stSelectbox [data-testid="stSelectbox"] * {
-            background: #0f172a !important;
+            background: #ffffff !important;
         }
         /* Fix expander header text color for readability */
         .streamlit-expanderHeader {
-            color: #e5e7eb !important;
-            background: #0f172a !important;
+            color: #1f2937 !important;
+            background: #f9fafb !important;
         }
         .streamlit-expanderHeader:hover {
-            color: #ffffff !important;
-            background: #1e293b !important;
+            color: #111827 !important;
+            background: #f3f4f6 !important;
         }
         /* Ensure expander content text is readable */
         .streamlit-expanderContent {
-            color: #e5e7eb !important;
+            color: #1f2937 !important;
         }
-        /* Fix any white text in expanders */
+        /* Fix text in expanders */
         .streamlit-expanderHeader * {
-            color: #e5e7eb !important;
+            color: #1f2937 !important;
         }
         /* Force override expander header background */
         .streamlit-expanderHeader {
-            background-color: #0f172a !important;
+            background-color: #f9fafb !important;
         }
         /* Target the expander header container */
         [data-testid="stExpander"] {
-            background: #0f172a !important;
+            background: #ffffff !important;
         }
         [data-testid="stExpander"] * {
-            background: #0f172a !important;
+            background: #ffffff !important;
         }
-        /* Override any white backgrounds in expanders */
+        /* Override backgrounds in expanders */
         .streamlit-expanderHeader[style*="background"] {
-            background: #0f172a !important;
+            background: #f9fafb !important;
         }
         .streamlit-expanderHeader div[style*="background"] {
-            background: #0f172a !important;
+            background: #f9fafb !important;
         }
         /* Ensure buttons are properly aligned */
         .stButton > button {
@@ -278,46 +232,46 @@ def inject_css() -> None:
         }
         /* Streamlit popover/menu (Deploy/3-dot menu) */
         [data-baseweb="popover"] {
-            background: #111827 !important;
-            color: #ffffff !important;
-            border: 1px solid #334155 !important;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
         }
-        [data-baseweb="popover"] * { color: #ffffff !important; }
+        [data-baseweb="popover"] * { color: #1f2937 !important; }
         [data-baseweb="menu"], [role="menu"] {
-            background: #111827 !important;
-            color: #ffffff !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
         }
-        [data-baseweb="menu"] *, [role="menu"] * { color: #ffffff !important; }
-        /* Ensure menu item rows (including disabled/headers) are dark */
+        [data-baseweb="menu"] *, [role="menu"] * { color: #1f2937 !important; }
+        /* Ensure menu item rows */
         [data-baseweb="menu"] li,
         [data-baseweb="menu"] [role="menuitem"],
         [data-baseweb="menu"] [aria-disabled="true"],
         [role="menu"] [aria-disabled="true"],
         [data-baseweb="menu"] [disabled] {
-            background: #0f172a !important;
-            color: #e5e7eb !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
             opacity: 1 !important;
         }
         /* Hover/active states */
         [data-baseweb="menu"] li:hover,
         [data-baseweb="menu"] [role="menuitem"]:hover {
-            background: #1f2937 !important;
+            background: #f3f4f6 !important;
         }
-        [data-baseweb="menu"] hr { border-color: #334155 !important; }
+        [data-baseweb="menu"] hr { border-color: #e5e7eb !important; }
         /* Headings */
-        .app-title { font-weight: 800; font-size: 2.2rem; margin-bottom: 0.25rem; color: #ffffff; }
-        .app-caption { color: #ffffff; margin-bottom: 1.25rem; }
-        .section-title { font-weight: 800; font-size: 1.4rem; margin: 0.5rem 0 0.75rem; color: #ffffff; }
-        .pos-header { font-weight: 800; font-size: 1.1rem; margin-bottom: 0.5rem; color: #ffffff; }
+        .app-title { font-weight: 800; font-size: 2.2rem; margin-bottom: 0.25rem; color: #1f2937; }
+        .app-caption { color: #4b5563; margin-bottom: 1.25rem; }
+        .section-title { font-weight: 800; font-size: 1.4rem; margin: 0.5rem 0 0.75rem; color: #1f2937; }
+        .pos-header { font-weight: 800; font-size: 1.1rem; margin-bottom: 0.5rem; color: #1f2937; }
         /* Player cards */
         .player-card {
-            border: 1px solid #1f2a3b;
+            border: 1px solid #e5e7eb;
             border-radius: 10px;
             padding: 14px 16px;
             margin-bottom: 12px;
-            background: #111827;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+            background: #f9fafb;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -340,75 +294,75 @@ def inject_css() -> None:
         .player-content {
             flex: 1;
         }
-        .player-name { font-weight: 800; font-size: 1.05rem; margin-bottom: 4px; color: #e5e7eb; }
-        .player-team { color: #9ca3af; font-weight: 700; margin-left: 6px; }
-        .player-meta { color: #cbd5e1; font-size: 0.92rem; margin-top: 2px; }
-        .player-injury { color: #f87171; font-size: 0.9rem; margin-top: 6px; font-weight: 700; }
-        .badge { display:inline-block; padding: 2px 8px; background:#1f2937; border:1px solid #334155; color:#cbd5e1; border-radius:999px; font-size:12px; margin-right:6px; }
-        .num-badge { display:inline-block; min-width: 24px; padding: 2px 6px; margin-right: 8px; text-align:center; background:#0b1220; border:1px solid #334155; color:#e5e7eb; border-radius:8px; font-weight:800; }
+        .player-name { font-weight: 800; font-size: 1.05rem; margin-bottom: 4px; color: #1f2937; }
+        .player-team { color: #6b7280; font-weight: 700; margin-left: 6px; }
+        .player-meta { color: #4b5563; font-size: 0.92rem; margin-top: 2px; }
+        .player-injury { color: #dc2626; font-size: 0.9rem; margin-top: 6px; font-weight: 700; }
+        .badge { display:inline-block; padding: 2px 8px; background:#e5e7eb; border:1px solid #d1d5db; color:#374151; border-radius:999px; font-size:12px; margin-right:6px; }
+        .num-badge { display:inline-block; min-width: 24px; padding: 2px 6px; margin-right: 8px; text-align:center; background:#f3f4f6; border:1px solid #d1d5db; color:#1f2937; border-radius:8px; font-weight:800; }
         
-        /* File uploader styling for dark theme */
+        /* File uploader styling for light theme */
         .stFileUploader {
-            background: #111827 !important;
-            border: 2px dashed #334155 !important;
+            background: #f9fafb !important;
+            border: 2px dashed #d1d5db !important;
             border-radius: 12px !important;
             padding: 20px !important;
         }
         .stFileUploader > div {
-            background: #111827 !important;
+            background: #f9fafb !important;
             border: none !important;
         }
         .stFileUploader [data-testid="stFileUploader"] {
-            background: #111827 !important;
-            border: 2px dashed #334155 !important;
+            background: #f9fafb !important;
+            border: 2px dashed #d1d5db !important;
             border-radius: 12px !important;
         }
         .stFileUploader [data-testid="stFileUploader"] > div {
-            background: #111827 !important;
+            background: #f9fafb !important;
             border: none !important;
         }
         /* File uploader text and button */
         .stFileUploader p, .stFileUploader span, .stFileUploader label {
-            color: #e5e7eb !important;
+            color: #1f2937 !important;
         }
         .stFileUploader button {
-            background: #1f2937 !important;
-            color: #ffffff !important;
-            border: 1px solid #334155 !important;
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
             border-radius: 8px !important;
         }
         .stFileUploader button:hover {
-            background: #263244 !important;
-            border-color: #3b4456 !important;
+            background: #e5e7eb !important;
+            border-color: #9ca3af !important;
         }
-        /* Override any white backgrounds in file uploader */
+        /* Override backgrounds in file uploader */
         [data-testid="stFileUploader"] * {
-            background: #111827 !important;
+            background: #f9fafb !important;
         }
         [data-testid="stFileUploader"] div[style*="background"] {
-            background: #111827 !important;
+            background: #f9fafb !important;
         }
         
-        /* Code blocks and inline code styling for dark theme */
+        /* Code blocks and inline code styling for light theme */
         code, pre, .stMarkdown code {
-            background: #1f2937 !important;
-            color: #e5e7eb !important;
-            border: 1px solid #334155 !important;
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+            border: 1px solid #e5e7eb !important;
             border-radius: 4px !important;
             padding: 2px 6px !important;
         }
         pre {
-            background: #1f2937 !important;
-            color: #e5e7eb !important;
-            border: 1px solid #334155 !important;
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+            border: 1px solid #e5e7eb !important;
             border-radius: 8px !important;
             padding: 12px !important;
         }
         /* Inline code styling */
         .stMarkdown p code {
-            background: #1f2937 !important;
-            color: #e5e7eb !important;
-            border: 1px solid #334155 !important;
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+            border: 1px solid #e5e7eb !important;
             border-radius: 4px !important;
             padding: 2px 6px !important;
         }
