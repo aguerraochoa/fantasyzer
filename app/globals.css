@@ -513,6 +513,19 @@ p {
   min-height: 100vh;
 }
 
+.main-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-2xl);
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -537,11 +550,19 @@ p {
   .sidebar {
     width: 280px;
   }
+  
+  .container {
+    padding: 0 var(--spacing-lg);
+  }
 }
 
 @media (max-width: 768px) {
   .flex {
     flex-direction: column;
+  }
+  
+  .container {
+    padding: 0 var(--spacing-md);
   }
   
   .sidebar {
@@ -551,6 +572,8 @@ p {
     max-height: none;
     border-right: none;
     border-bottom: 1px solid var(--border-light);
+    padding: var(--spacing-lg);
+    top: 0 !important;
   }
   
   .main-content {
@@ -558,17 +581,122 @@ p {
   }
   
   .nav {
-    flex-direction: column;
-    gap: var(--spacing-md);
+    flex-direction: row;
+    gap: var(--spacing-sm);
     padding: var(--spacing-md);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .nav-center {
+    order: -1;
+    width: 100%;
+    text-align: center;
+    margin-bottom: var(--spacing-xs);
   }
   
   .app-title {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
   
+  .app-caption {
+    font-size: 0.9375rem;
+  }
+  
+  .section-title {
+    font-size: 1.125rem;
+  }
+  
+  .card {
+    padding: var(--spacing-md);
+  }
+  
+  .player-card {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+  
+  .player-logo-container {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .tab {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+  
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.875rem;
+  }
+  
+  .input {
+    font-size: 0.875rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
   .container {
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .nav {
+    padding: var(--spacing-sm);
+  }
+  
+  .nav-center {
+    font-size: 1.125rem;
+  }
+  
+  .app-title {
+    font-size: 1.5rem;
+  }
+  
+  .sidebar {
+    padding: var(--spacing-md);
+  }
+  
+  .main-content {
+    padding: var(--spacing-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .player-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .player-logo-container {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .badge {
+    font-size: 0.6875rem;
+    padding: 0.1875rem 0.5rem;
+  }
+  
+  .tab {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8125rem;
   }
 }
 

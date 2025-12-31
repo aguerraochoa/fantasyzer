@@ -226,10 +226,18 @@ export default function WeeklyRankingsPage() {
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 'var(--spacing-2xl)', marginTop: 'var(--spacing-xl)' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: '320px 1fr', 
+          gap: 'var(--spacing-2xl)', 
+          marginTop: 'var(--spacing-xl)'
+        }} className="main-layout">
           {/* Sidebar */}
           <aside className="sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
-            <h3 style={{ marginBottom: 'var(--spacing-lg)', fontSize: '1.125rem', fontWeight: 600 }}>League Setup</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-lg)' }}>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>League Setup</h3>
+              {loading && <div className="spinner-small"></div>}
+            </div>
             
             <div style={{ marginBottom: 'var(--spacing-xl)' }}>
               <h4 style={{ marginBottom: 'var(--spacing-sm)', fontSize: '0.9375rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
