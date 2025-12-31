@@ -156,12 +156,17 @@ export default function DraftAssistantPage() {
             <span>{success}</span>
           </div>
         )}
-        {loading && <div className="spinner"></div>}
+
+        {loading && (
+          <div className="loading-overlay">
+            <div className="spinner"></div>
+          </div>
+        )}
 
         <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 'var(--spacing-2xl)', marginTop: 'var(--spacing-xl)' }}>
           {/* Sidebar */}
-          <aside className="sidebar" style={{ position: 'sticky', top: '80px', alignSelf: 'start' }}>
-            <h3 style={{ marginBottom: 'var(--spacing-lg)', fontSize: '1.25rem' }}>Setup</h3>
+          <aside className="sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
+            <h3 style={{ marginBottom: 'var(--spacing-lg)', fontSize: '1.125rem', fontWeight: 600 }}>Setup</h3>
             
             <div style={{ marginBottom: 'var(--spacing-xl)' }}>
               <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>

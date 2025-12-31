@@ -43,6 +43,7 @@ export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCard
       "HOU": "/team-logos/Houston_Texans_logo.svg.png",
       "IND": "/team-logos/Indianapolis_Colts_logo.svg.png",
       "JAX": "/team-logos/Jacksonville_Jaguars_logo.svg.png",
+      "JAC": "/team-logos/Jacksonville_Jaguars_logo.svg.png", // Sleeper uses JAC
       "KC": "/team-logos/Kansas_City_Chiefs_logo.svg.png",
       "LV": "/team-logos/Las_Vegas_Raiders_logo.svg.png",
       "LAR": "/team-logos/Los_Angeles_Rams_logo.svg.png",

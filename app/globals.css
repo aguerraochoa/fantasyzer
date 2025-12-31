@@ -413,7 +413,7 @@ p {
   border-color: rgba(74, 111, 165, 0.2);
 }
 
-/* Loading Spinner */
+/* Loading Spinner - Inline */
 .spinner {
   width: 40px;
   height: 40px;
@@ -421,7 +421,30 @@ p {
   border-top-color: var(--accent-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  margin: var(--spacing-2xl) auto;
+  margin: var(--spacing-xl) auto;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(245, 245, 240, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  min-height: 200px;
 }
 
 @keyframes spin {
