@@ -7,7 +7,8 @@ import { getUserLeagues, analyzeWeeklyRankings, getOptimalLineup, getROSRecommen
 
 export default function WeeklyRankingsPage() {
   const [username, setUsername] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loadingLeagues, setLoadingLeagues] = useState(false)
+  const [loadingAnalysis, setLoadingAnalysis] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [discoveredLeagues, setDiscoveredLeagues] = useState<Array<{name: string, id: string, userId: string}>>([])
   const [hasSearched, setHasSearched] = useState(false)
@@ -65,7 +66,7 @@ export default function WeeklyRankingsPage() {
       return
     }
     
-    setLoading(true)
+    setLoadingLeagues(true)
     setError(null)
     setHasSearched(true)
     
@@ -85,13 +86,13 @@ export default function WeeklyRankingsPage() {
       setError(err.message || 'Failed to find leagues')
       setDiscoveredLeagues([])
     } finally {
-      setLoading(false)
+      setLoadingLeagues(false)
     }
   }
 
   const handleSelectLeague = async (league: {name: string, id: string, userId: string}) => {
     setSelectedLeague(league)
-    setLoading(true)
+    setLoadingAnalysis(true)
     setError(null)
     
     try {
@@ -121,7 +122,7 @@ export default function WeeklyRankingsPage() {
     } catch (err: any) {
       setError(err.message || 'Failed to analyze league')
     } finally {
-      setLoading(false)
+      setLoadingAnalysis(false)
     }
   }
 
@@ -240,7 +241,7 @@ export default function WeeklyRankingsPage() {
           <aside className="sidebar desktop-sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-lg)' }}>
               <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>League Setup</h3>
-              {loading && <div className="spinner-small"></div>}
+              {loadingLeagues && <div className="spinner-small"></div>}
             </div>
             
             <div style={{ marginBottom: 'var(--spacing-xl)' }}>
@@ -262,14 +263,14 @@ export default function WeeklyRankingsPage() {
                 Season: {new Date().getFullYear()}
               </p>
               
-              <button 
-                className="btn btn-primary" 
-                onClick={handleFindLeagues}
-                disabled={loading || !username.trim()}
-                style={{ width: '100%' }}
-              >
-                Find my leagues
-              </button>
+                    <button 
+                      className="btn btn-primary" 
+                      onClick={handleFindLeagues}
+                      disabled={loadingLeagues || !username.trim()}
+                      style={{ width: '100%' }}
+                    >
+                      Find my leagues
+                    </button>
             </div>
 
             <div>
@@ -334,7 +335,7 @@ export default function WeeklyRankingsPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
                   <span style={{ fontSize: '1.25rem' }}>⚙️</span>
                   <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>League Setup</span>
-                  {loading && <div className="spinner-small" style={{ marginLeft: 'var(--spacing-sm)' }}></div>}
+                  {loadingLeagues && <div className="spinner-small" style={{ marginLeft: 'var(--spacing-sm)' }}></div>}
                 </div>
                 <span style={{ fontSize: '1.25rem', transition: 'transform var(--transition-base)', transform: setupExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                   ▼
@@ -371,7 +372,7 @@ export default function WeeklyRankingsPage() {
                     <button 
                       className="btn btn-primary" 
                       onClick={handleFindLeagues}
-                      disabled={loading || !username.trim()}
+                      disabled={loadingLeagues || !username.trim()}
                       style={{ width: '100%' }}
                     >
                       Find my leagues
@@ -425,7 +426,7 @@ export default function WeeklyRankingsPage() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-sm)' }}>
               <h1 className="app-title" style={{ margin: 0 }}>Weekly Rankings</h1>
-              {loading && <div className="spinner-small"></div>}
+              {loadingAnalysis && <div className="spinner-small"></div>}
             </div>
             <p className="app-caption" style={{ marginBottom: 'var(--spacing-2xl)' }}>
               Get start/sit recommendations and waiver wire suggestions for your leagues.
