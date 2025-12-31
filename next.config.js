@@ -2,8 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: [],
     unoptimized: true,
+    // Allow local images from public folder
+    remotePatterns: [],
   },
   // Enable Python API routes
   experimental: {
