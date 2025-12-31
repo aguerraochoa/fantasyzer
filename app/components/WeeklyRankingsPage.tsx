@@ -17,7 +17,7 @@ export default function WeeklyRankingsPage() {
   const [rosAnalysis, setRosAnalysis] = useState<any>(null)
   const [rosterSettings, setRosterSettings] = useState<Record<string, number>>({})
   const [activeTab, setActiveTab] = useState<string>('start-sit')
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [setupExpanded, setSetupExpanded] = useState(false)
 
   const getTeamLogoPath = (teamAbbrev: string): string | null => {
     if (!teamAbbrev) return null
@@ -230,56 +230,14 @@ export default function WeeklyRankingsPage() {
           </div>
         )}
 
-        {/* Mobile Menu Button */}
-        <button
-          className="mobile-menu-btn"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          style={{
-            display: 'none',
-            position: 'fixed',
-            top: '80px',
-            right: 'var(--spacing-md)',
-            zIndex: 1001,
-            background: 'var(--accent-primary)',
-            color: 'white',
-            border: 'none',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--spacing-sm) var(--spacing-md)',
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            boxShadow: 'var(--shadow-md)'
-          }}
-        >
-          {mobileMenuOpen ? '✕ Close' : '☰ Setup'}
-        </button>
-
-        {/* Mobile Menu Overlay */}
-        {mobileMenuOpen && (
-          <div
-            className="mobile-menu-overlay"
-            onClick={() => setMobileMenuOpen(false)}
-            style={{
-              display: 'none',
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.5)',
-              zIndex: 999
-            }}
-          />
-        )}
-
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: '320px 1fr', 
           gap: 'var(--spacing-2xl)', 
           marginTop: 'var(--spacing-xl)'
         }} className="main-layout">
-          {/* Sidebar */}
-          <aside className={`sidebar mobile-sidebar ${mobileMenuOpen ? 'mobile-sidebar-open' : ''}`} style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
+          {/* Desktop Sidebar */}
+          <aside className="sidebar desktop-sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-lg)' }}>
               <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>League Setup</h3>
               {loading && <div className="spinner-small"></div>}
@@ -356,6 +314,115 @@ export default function WeeklyRankingsPage() {
 
           {/* Main Content */}
           <main>
+            {/* Mobile Setup Section */}
+            <div className="mobile-setup-section">
+              <button
+                onClick={() => setSetupExpanded(!setupExpanded)}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: 'var(--spacing-md)',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-light)',
+                  borderRadius: 'var(--radius-lg)',
+                  cursor: 'pointer',
+                  marginBottom: setupExpanded ? 'var(--spacing-md)' : 0
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+                  <span style={{ fontSize: '1.25rem' }}>⚙️</span>
+                  <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>League Setup</span>
+                  {loading && <div className="spinner-small" style={{ marginLeft: 'var(--spacing-sm)' }}></div>}
+                </div>
+                <span style={{ fontSize: '1.25rem', transition: 'transform var(--transition-base)', transform: setupExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                  ▼
+                </span>
+              </button>
+              
+              {setupExpanded && (
+                <div className="mobile-setup-content" style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-light)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: 'var(--spacing-lg)',
+                  marginBottom: 'var(--spacing-lg)'
+                }}>
+                  <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+                    <h4 style={{ marginBottom: 'var(--spacing-sm)', fontSize: '0.9375rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                      Discover Your Leagues
+                    </h4>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginBottom: 'var(--spacing-sm)' }}>
+                      Enter your Sleeper username to find your leagues
+                    </p>
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="your_username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      style={{ marginBottom: 'var(--spacing-sm)' }}
+                    />
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 'var(--spacing-md)' }}>
+                      Season: {new Date().getFullYear()}
+                    </p>
+                    
+                    <button 
+                      className="btn btn-primary" 
+                      onClick={handleFindLeagues}
+                      disabled={loading || !username.trim()}
+                      style={{ width: '100%' }}
+                    >
+                      Find my leagues
+                    </button>
+                  </div>
+
+                  <div>
+                    <p style={{ 
+                      fontSize: '0.875rem', 
+                      color: 'var(--text-secondary)', 
+                      marginBottom: 'var(--spacing-md)',
+                      fontWeight: 500
+                    }}>
+                      Your Leagues:
+                    </p>
+                    {discoveredLeagues.length > 0 ? (
+                      discoveredLeagues.map((league) => (
+                        <button
+                          key={league.id}
+                          className="btn"
+                          onClick={() => {
+                            handleSelectLeague(league)
+                            setSetupExpanded(false)
+                          }}
+                          style={{ 
+                            width: '100%',
+                            marginBottom: 'var(--spacing-xs)',
+                            justifyContent: 'flex-start'
+                          }}
+                        >
+                          {league.name}
+                        </button>
+                      ))
+                    ) : (
+                      <div style={{
+                        padding: 'var(--spacing-lg)',
+                        textAlign: 'center',
+                        color: 'var(--text-tertiary)',
+                        fontSize: '0.875rem',
+                        background: 'var(--bg-tertiary)',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px solid var(--border-light)'
+                      }}>
+                        {hasSearched ? 'No leagues found' : 'Enter your username and click "Find my leagues"'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-sm)' }}>
               <h1 className="app-title" style={{ margin: 0 }}>Weekly Rankings</h1>
               {loading && <div className="spinner-small"></div>}
