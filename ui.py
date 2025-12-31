@@ -617,7 +617,20 @@ def render_search(draft_tool: FantasyDraftTool) -> None:
         st.warning("No player found.")
         return
 
-    st.subheader(player.name)
+    # Display player name with logo
+    logo_path = get_team_logo_path(player.team)
+    col_logo, col_name = st.columns([0.1, 0.9])
+    with col_logo:
+        if logo_path and os.path.exists(logo_path):
+            try:
+                st.image(logo_path, width=50)
+            except Exception:
+                st.write("")
+        else:
+            st.write("")
+    with col_name:
+        st.subheader(player.name)
+    
     col1, col2 = st.columns(2)
     with col1:
         st.write(f"Team: {player.team}")
@@ -637,6 +650,33 @@ def render_search(draft_tool: FantasyDraftTool) -> None:
             st.write("Injury Status:", sp.get("injury_status"))
         if sp.get("injury_notes"):
             st.write("Injury Notes:", sp.get("injury_notes"))
+
+
+def render_player_with_logo(player_name: str, team: str, position_display: str, rank: int, 
+                            roster_slot: str = None, waiver_indicator: str = "", 
+                            free_agent: bool = False, upgrade_info: str = None) -> None:
+    """Render a player line with team logo for weekly rankings page."""
+    logo_path = get_team_logo_path(team)
+    
+    # Create the player text
+    slot_text = f"**{roster_slot}** " if roster_slot else ""
+    free_agent_text = " ✨ FREE AGENT" if free_agent else ""
+    player_text = f"{slot_text}**{player_name}** ({position_display}) - {team} - **Rank #{rank}**{waiver_indicator}{free_agent_text}"
+    
+    # Use columns to display logo and text
+    col1, col2 = st.columns([0.08, 0.92])
+    with col1:
+        if logo_path and os.path.exists(logo_path):
+            try:
+                st.image(logo_path, width=30)
+            except Exception:
+                st.write("")
+        else:
+            st.write("")
+    with col2:
+        st.markdown(player_text)
+        if upgrade_info:
+            st.caption(upgrade_info)
 
 
 def render_player_card(player: Player, sleeper_players: Dict[str, dict], index: int = None) -> None:
@@ -905,7 +945,14 @@ def render_weekly_rankings_content() -> None:
                     if roster_slot in ['SUPER_FLEX', 'FLEX', 'WRRBTE_FLEX', 'WRRB_FLEX']:
                         roster_slot = 'FLEX'
                     
-                    st.write(f"**{roster_slot}** **{player['name']}** ({position_display}) - {player['team']} - **Rank #{player['rank']}**{waiver_indicator}")
+                    render_player_with_logo(
+                        player['name'], 
+                        player['team'], 
+                        position_display, 
+                        player['rank'],
+                        roster_slot=roster_slot,
+                        waiver_indicator=waiver_indicator
+                    )
             else:
                 st.warning("No starting lineup recommendations available.")
             
@@ -914,7 +961,13 @@ def render_weekly_rankings_content() -> None:
                 st.markdown("**🪑 BENCH PLAYERS:**")
                 for player in analysis['bench']:
                     position_display = player.get('position_with_rank', player['position'])
-                    st.write(f"**BN** **{player['name']}** ({position_display}) - {player['team']} - **Rank #{player['rank']}**")
+                    render_player_with_logo(
+                        player['name'],
+                        player['team'],
+                        position_display,
+                        player['rank'],
+                        roster_slot='BN'
+                    )
             else:
                 st.info("No bench players.")
             
@@ -926,13 +979,23 @@ def render_weekly_rankings_content() -> None:
             if dst_required and analysis['defenses'] and len(analysis['defenses']) > 1:
                 st.markdown("**🛡️ OTHER DEFENSES ON ROSTER:**")
                 for i, defense in enumerate(analysis['defenses'][1:], 1):  # Skip first one (already in lineup)
-                    st.write(f"{i}. **{defense['name']}** - **Rank #{defense['rank']}**")
+                    render_player_with_logo(
+                        defense['name'],
+                        defense.get('team', ''),
+                        'DEF',
+                        defense['rank']
+                    )
             
             # Kickers (if not in starting lineup and position is required)
             if k_required and analysis['kickers'] and len(analysis['kickers']) > 1:
                 st.markdown("**🦵 OTHER KICKERS ON ROSTER:**")
                 for i, kicker in enumerate(analysis['kickers'][1:], 1):  # Skip first one (already in lineup)
-                    st.write(f"{i}. **{kicker['name']}** ({kicker['team']}) - **Rank #{kicker['rank']}**")
+                    render_player_with_logo(
+                        kicker['name'],
+                        kicker['team'],
+                        'K',
+                        kicker['rank']
+                    )
         
         with col2:
             # Waiver Wire Suggestions - only show if the positions are required in the league
@@ -948,7 +1011,13 @@ def render_weekly_rankings_content() -> None:
                         st.markdown("**Top 5 Defenses:**")
                         for i, defense in enumerate(analysis['waiver_suggestions']['defenses'][:5], 1):
                             status = "On Your Roster" if defense.get('is_on_roster', False) else "Free Agent"
-                            st.write(f"{i}. **{defense['name']}** - **Rank #{defense['rank']}** ({status})")
+                            render_player_with_logo(
+                                defense['name'],
+                                defense.get('team', ''),
+                                'DEF',
+                                defense['rank'],
+                                waiver_indicator=f" ({status})"
+                            )
                     else:
                         st.info("No defense suggestions available.")
                 
@@ -958,7 +1027,13 @@ def render_weekly_rankings_content() -> None:
                         st.markdown("**Top 5 Kickers:**")
                         for i, kicker in enumerate(analysis['waiver_suggestions']['kickers'][:5], 1):
                             status = "On Your Roster" if kicker.get('is_on_roster', False) else "Free Agent"
-                            st.write(f"{i}. **{kicker['name']}** ({kicker['team']}) - **Rank #{kicker['rank']}** ({status})")
+                            render_player_with_logo(
+                                kicker['name'],
+                                kicker['team'],
+                                'K',
+                                kicker['rank'],
+                                waiver_indicator=f" ({status})"
+                            )
                     else:
                         st.info("No kicker suggestions available.")
         
@@ -990,13 +1065,35 @@ def render_weekly_rankings_content() -> None:
                     # Check if this is a free agent recommendation
                     if player.get('is_free_agent', False):
                         current_player = player.get('replaces_player')
+                        upgrade_info = None
                         if current_player:
-                            st.write(f"**{roster_slot}** 🔄 **{player['name']}** ({position_display}) - {player['team']} - **Rank #{player['rank']}** ✨ FREE AGENT")
-                            st.caption(f"   ↳ Upgrade from: {current_player['name']} (Rank #{current_player['rank']}) - Improvement: +{current_player['rank'] - player['rank']} ranks")
+                            upgrade_info = f"   ↳ Upgrade from: {current_player['name']} (Rank #{current_player['rank']}) - Improvement: +{current_player['rank'] - player['rank']} ranks"
+                            render_player_with_logo(
+                                f"🔄 {player['name']}",
+                                player['team'],
+                                position_display,
+                                player['rank'],
+                                roster_slot=roster_slot,
+                                free_agent=True,
+                                upgrade_info=upgrade_info
+                            )
                         else:
-                            st.write(f"**{roster_slot}** **{player['name']}** ({position_display}) - {player['team']} - **Rank #{player['rank']}** ✨ FREE AGENT")
+                            render_player_with_logo(
+                                player['name'],
+                                player['team'],
+                                position_display,
+                                player['rank'],
+                                roster_slot=roster_slot,
+                                free_agent=True
+                            )
                     else:
-                        st.write(f"**{roster_slot}** **{player['name']}** ({position_display}) - {player['team']} - **Rank #{player['rank']}**")
+                        render_player_with_logo(
+                            player['name'],
+                            player['team'],
+                            position_display,
+                            player['rank'],
+                            roster_slot=roster_slot
+                        )
                 
                 # Show summary of potential improvements
                 if optimal_analysis['free_agent_upgrades']:
@@ -1005,7 +1102,20 @@ def render_weekly_rankings_content() -> None:
                     st.success(f"🚀 **{len(optimal_analysis['free_agent_upgrades'])} potential upgrade(s)** with **+{total_improvement} total rank improvement**")
                     
                     for upgrade in optimal_analysis['free_agent_upgrades']:
-                        st.write(f"• **{upgrade['position']}**: {upgrade['add']['name']} (#{upgrade['add']['rank']}) replaces {upgrade['drop']['name']} (#{upgrade['drop']['rank']}) - **+{upgrade['improvement']} ranks**")
+                        # Display upgrade with logos
+                        col1, col2 = st.columns([0.08, 0.92])
+                        with col1:
+                            # Show logo for the add player
+                            add_logo = get_team_logo_path(upgrade['add'].get('team', ''))
+                            if add_logo and os.path.exists(add_logo):
+                                try:
+                                    st.image(add_logo, width=25)
+                                except Exception:
+                                    st.write("")
+                            else:
+                                st.write("")
+                        with col2:
+                            st.write(f"• **{upgrade['position']}**: {upgrade['add']['name']} (#{upgrade['add']['rank']}) replaces {upgrade['drop']['name']} (#{upgrade['drop']['rank']}) - **+{upgrade['improvement']} ranks**")
                 else:
                     st.info("✅ Your current starting lineup is already optimal - no better free agents available!")
             else:
@@ -1046,8 +1156,20 @@ def render_weekly_rankings_content() -> None:
                             add_player = rec['add']
                             improvement = rec['improvement']
                             
-                            st.write(f"Drop: **{drop_player['name']}** ({drop_player['position_with_rank']}) - Rank #{drop_player['rank']}")
-                            st.write(f"Add: **{add_player['name']}** ({add_player['position_with_rank']}) - Rank #{add_player['rank']}")
+                            st.markdown("**Drop:**")
+                            render_player_with_logo(
+                                drop_player['name'],
+                                drop_player.get('team', ''),
+                                drop_player['position_with_rank'],
+                                drop_player['rank']
+                            )
+                            st.markdown("**Add:**")
+                            render_player_with_logo(
+                                add_player['name'],
+                                add_player.get('team', ''),
+                                add_player['position_with_rank'],
+                                add_player['rank']
+                            )
                             st.success(f"⬆️ Improvement: +{improvement} ranks")
                             st.write("")  # Spacing
                     else:
@@ -1063,7 +1185,19 @@ def render_weekly_rankings_content() -> None:
                     # Sort by rank (best ranks first)
                     sorted_drops = sorted(ros_analysis['worst_drops'], key=lambda x: x['rank'])
                     for player in sorted_drops[:8]:  # Top 8
-                        st.write(f"**{player['position']}** Rank #{player['rank']} - {player['name']} ({player['team']})")
+                        # Format: **{position}** Rank #{rank} - {name} ({team})
+                        col1, col2 = st.columns([0.08, 0.92])
+                        with col1:
+                            logo_path = get_team_logo_path(player['team'])
+                            if logo_path and os.path.exists(logo_path):
+                                try:
+                                    st.image(logo_path, width=30)
+                                except Exception:
+                                    st.write("")
+                            else:
+                                st.write("")
+                        with col2:
+                            st.markdown(f"**{player['position']}** Rank #{player['rank']} - {player['name']} ({player['team']})")
                 else:
                     st.info("No players to drop")
                 
@@ -1075,7 +1209,19 @@ def render_weekly_rankings_content() -> None:
                     # Sort by rank (best ranks first)
                     sorted_adds = sorted(ros_analysis['best_adds'], key=lambda x: x['rank'])
                     for player in sorted_adds[:8]:  # Top 8
-                        st.write(f"**{player['position']}** Rank #{player['rank']} - {player['name']} ({player['team']})")
+                        # Format: **{position}** Rank #{rank} - {name} ({team})
+                        col1, col2 = st.columns([0.08, 0.92])
+                        with col1:
+                            logo_path = get_team_logo_path(player['team'])
+                            if logo_path and os.path.exists(logo_path):
+                                try:
+                                    st.image(logo_path, width=30)
+                                except Exception:
+                                    st.write("")
+                            else:
+                                st.write("")
+                        with col2:
+                            st.markdown(f"**{player['position']}** Rank #{player['rank']} - {player['name']} ({player['team']})")
                 else:
                     st.info("No free agents found")
         else:
@@ -1132,9 +1278,20 @@ def render_draft_assistant_page() -> None:
     if not drafted:
         st.write("No drafted players detected yet.")
     else:
-        # Numbered list of drafted players with team and position
-        drafted_lines = [f"{i}. {p.name} ({p.team}) — {p.position} #{p.position_rank}" for i, p in enumerate(drafted, start=1)]
-        st.markdown("\n".join(drafted_lines))
+        # Display drafted players with logos
+        for i, p in enumerate(drafted, start=1):
+            logo_path = get_team_logo_path(p.team)
+            col1, col2 = st.columns([0.08, 0.92])
+            with col1:
+                if logo_path and os.path.exists(logo_path):
+                    try:
+                        st.image(logo_path, width=30)
+                    except Exception:
+                        st.write("")
+                else:
+                    st.write("")
+            with col2:
+                st.markdown(f"{i}. **{p.name}** ({p.team}) — {p.position} #{p.position_rank}")
 
     # Optional debug: show unmatched drafted players from Sleeper (to diagnose missing mappings)
     with st.expander("Debug: Unmatched drafted players (from Sleeper)"):
@@ -1142,7 +1299,20 @@ def render_draft_assistant_page() -> None:
         if not unmatched:
             st.write("None")
         else:
-            st.write(unmatched)
+            for player_info in unmatched:
+                team = player_info.get('team', '')
+                logo_path = get_team_logo_path(team)
+                col1, col2 = st.columns([0.08, 0.92])
+                with col1:
+                    if logo_path and os.path.exists(logo_path):
+                        try:
+                            st.image(logo_path, width=25)
+                        except Exception:
+                            st.write("")
+                    else:
+                        st.write("")
+                with col2:
+                    st.write(f"**{player_info.get('full_name', 'Unknown')}** - {player_info.get('position', '')} - {team}")
 
 
 def render_weekly_rankings_page() -> None:
