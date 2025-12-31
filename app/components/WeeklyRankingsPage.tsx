@@ -166,9 +166,9 @@ export default function WeeklyRankingsPage() {
           }}>
             {rosterSlot && (
               <span className="badge" style={{ 
-                background: 'rgba(99, 102, 241, 0.2)',
-                borderColor: 'rgba(99, 102, 241, 0.4)',
-                color: 'var(--primary-light)'
+                background: 'rgba(74, 111, 165, 0.15)',
+                borderColor: 'rgba(74, 111, 165, 0.3)',
+                color: 'var(--royal-blue)'
               }}>
                 {rosterSlot}
               </span>
@@ -189,9 +189,9 @@ export default function WeeklyRankingsPage() {
               {player.team || ''}
             </span>
             <span className="badge" style={{ 
-              background: 'rgba(139, 92, 246, 0.2)',
-              borderColor: 'rgba(139, 92, 246, 0.4)',
-              color: 'var(--secondary)'
+              background: 'rgba(157, 180, 212, 0.2)',
+              borderColor: 'rgba(157, 180, 212, 0.4)',
+              color: 'var(--periwinkle)'
             }}>
               Rank #{player.rank}
             </span>
@@ -559,7 +559,7 @@ export default function WeeklyRankingsPage() {
                             style={{ 
                               marginBottom: '12px',
                               padding: '12px',
-                              background: 'rgba(99, 102, 241, 0.05)',
+                              background: 'rgba(74, 111, 165, 0.05)',
                               borderRadius: '8px',
                               border: '1px solid var(--border-color)'
                             }}
@@ -616,7 +616,7 @@ export default function WeeklyRankingsPage() {
                                   style={{ 
                                     marginBottom: '20px',
                                     padding: '16px',
-                                    background: 'rgba(99, 102, 241, 0.05)',
+                                    background: 'rgba(74, 111, 165, 0.05)',
                                     borderRadius: '12px',
                                     border: '1px solid var(--border-color)'
                                   }}
