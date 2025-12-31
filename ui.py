@@ -10,7 +10,7 @@ from fantasy_draft_tool import FantasyDraftTool, Player
 from league_manager import LeagueManager
 
 
-st.set_page_config(page_title="Fantasy Draft Tool", layout="wide")
+st.set_page_config(page_title="Fantasy Draft Tool", layout="wide")  # Updated styling
 
 
 def initialize_session_state() -> None:
