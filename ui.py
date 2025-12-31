@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import re
-from typing import List, Dict
+from typing import List, Dict, Optional
 import io
 
 import streamlit as st
@@ -318,6 +318,27 @@ def inject_css() -> None:
             margin-bottom: 12px;
             background: #111827;
             box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .player-logo-container {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .player-logo {
+            max-width: 40px;
+            max-height: 40px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+        .player-content {
+            flex: 1;
         }
         .player-name { font-weight: 800; font-size: 1.05rem; margin-bottom: 4px; color: #e5e7eb; }
         .player-team { color: #9ca3af; font-weight: 700; margin-left: 6px; }
@@ -395,6 +416,63 @@ def inject_css() -> None:
         """,
         unsafe_allow_html=True,
     )
+
+
+def get_team_logo_path(team_abbrev: str) -> Optional[str]:
+    """Get the path to a team logo file based on team abbreviation."""
+    if not team_abbrev:
+        return None
+    
+    # Map team abbreviations to logo file names
+    team_logo_map = {
+        "ARI": "Arizona_Cardinals_logo.svg.png",
+        "ATL": "Atlanta_Falcons_logo.svg.png",
+        "BAL": "Baltimore_Ravens_logo.svg.png",
+        "BUF": "Buffalo_Bills_logo.svg.png",
+        "CAR": "Carolina_Panthers_logo.svg.png",
+        "CHI": "Chicago_Bears_logo.svg.png",
+        "CIN": "Cincinnati_Bengals_logo.svg.png",
+        "CLE": "Cleveland_Browns_logo.svg.png",
+        "DAL": "Dallas_Cowboys.svg.png",
+        "DEN": "Denver_Broncos_logo.svg.png",
+        "DET": "Detroit_Lions_logo.svg.png",
+        "GB": "Green_Bay_Packers_logo.svg.png",
+        "HOU": "Houston_Texans_logo.svg.png",
+        "IND": "Indianapolis_Colts_logo.svg.png",
+        "JAX": "Jacksonville_Jaguars_logo.svg.png",
+        "KC": "Kansas_City_Chiefs_logo.svg.png",
+        "LV": "Las_Vegas_Raiders_logo.svg.png",
+        "LAR": "Los_Angeles_Rams_logo.svg.png",
+        "LAC": "NFL_Chargers_logo.svg.png",
+        "MIA": "Miami_Dolphins_logo.svg.png",
+        "MIN": "Minnesota_Vikings_logo.svg.png",
+        "NE": "New_England_Patriots_logo.svg.png",
+        "NO": "New_Orleans_Saints_logo.svg.png",
+        "NYG": "New_York_Giants_logo.svg.png",
+        "NYJ": "New_York_Jets_logo.svg.png",
+        "PHI": "Philadelphia_Eagles_logo.svg.png",
+        "PIT": "Pittsburgh_Steelers_logo.svg.png",
+        "SF": "San_Francisco_49ers_logo.svg.png",
+        "SEA": "Seattle_Seahawks_logo.svg.png",
+        "TB": "Tampa_Bay_Buccaneers_logo.svg.png",
+        "TEN": "Tennessee_Titans_logo.svg.png",
+        "WAS": "Washington_football_team_wlogo.svg.png",
+        # Handle old team abbreviations
+        "OAK": "Las_Vegas_Raiders_logo.svg.png",  # Raiders old location
+        "SD": "NFL_Chargers_logo.svg.png",  # Chargers old location
+        "STL": "Los_Angeles_Rams_logo.svg.png",  # Rams old location
+    }
+    
+    logo_filename = team_logo_map.get(team_abbrev.upper())
+    if not logo_filename:
+        return None
+    
+    logo_path = f"Team Logos/{logo_filename}"
+    
+    # Check if file exists
+    if os.path.exists(logo_path):
+        return logo_path
+    return None
 
 
 def format_player_rows(players: List[Player], sleeper_players: Dict[str, dict]) -> List[Dict[str, object]]:
@@ -569,20 +647,38 @@ def render_player_card(player: Player, sleeper_players: Dict[str, dict], index: 
 
     num_html = f"<span class='num-badge'>{index}.</span>" if index is not None else ""
     injury_html = f"<div class='player-injury'>Injury: {injury}</div>" if injury else ""
-
+    
+    # Get team logo path
+    logo_path = get_team_logo_path(player.team)
+    
+    # Create logo HTML if logo exists
+    logo_html = ""
+    if logo_path and os.path.exists(logo_path):
+        try:
+            import base64
+            with open(logo_path, "rb") as img_file:
+                img_data = base64.b64encode(img_file.read()).decode()
+                logo_html = f'<div class="player-logo-container"><img src="data:image/png;base64,{img_data}" class="player-logo" alt="{player.team}" /></div>'
+        except Exception:
+            logo_html = ""
+    
+    # Display player card with logo
     st.markdown(
         f"""
         <div class="player-card">
-          <div class="player-name">{num_html}{player.name}<span class="player-team">({player.team})</span></div>
-          <div class="player-meta">
-            <span class="badge">Overall #{player.overall_rank}</span>
-            <span class="badge">{player.position} #{player.position_rank}</span>
-            <span class="badge">Tier {player.tier}</span>
-            <span class="badge">Bye {player.bye_week}</span>
-            <span class="badge">SOS {player.sos_season}</span>
-            <span class="badge">ECR vs ADP {player.ecr_vs_adp:+d}</span>
+          {logo_html}
+          <div class="player-content">
+            <div class="player-name">{num_html}{player.name}<span class="player-team">({player.team})</span></div>
+            <div class="player-meta">
+              <span class="badge">Overall #{player.overall_rank}</span>
+              <span class="badge">{player.position} #{player.position_rank}</span>
+              <span class="badge">Tier {player.tier}</span>
+              <span class="badge">Bye {player.bye_week}</span>
+              <span class="badge">SOS {player.sos_season}</span>
+              <span class="badge">ECR vs ADP {player.ecr_vs_adp:+d}</span>
+            </div>
+            {injury_html}
           </div>
-          {injury_html}
         </div>
         """,
         unsafe_allow_html=True,
