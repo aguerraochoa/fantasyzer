@@ -9,7 +9,6 @@ export default function WeeklyRankingsPage() {
   const [username, setUsername] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
   const [discoveredLeagues, setDiscoveredLeagues] = useState<Array<{name: string, id: string, userId: string}>>([])
   const [selectedLeague, setSelectedLeague] = useState<{name: string, id: string, userId: string} | null>(null)
   const [analysis, setAnalysis] = useState<any>(null)
@@ -21,39 +20,39 @@ export default function WeeklyRankingsPage() {
   const getTeamLogoPath = (teamAbbrev: string): string | null => {
     if (!teamAbbrev) return null
     const teamLogoMap: Record<string, string> = {
-      "ARI": "/team-logos/Arizona_Cardinals_logo.svg.png",
-      "ATL": "/team-logos/Atlanta_Falcons_logo.svg.png",
-      "BAL": "/team-logos/Baltimore_Ravens_logo.svg.png",
-      "BUF": "/team-logos/Buffalo_Bills_logo.svg.png",
-      "CAR": "/team-logos/Carolina_Panthers_logo.svg.png",
-      "CHI": "/team-logos/Chicago_Bears_logo.svg.png",
-      "CIN": "/team-logos/Cincinnati_Bengals_logo.svg.png",
-      "CLE": "/team-logos/Cleveland_Browns_logo.svg.png",
-      "DAL": "/team-logos/Dallas_Cowboys.svg.png",
-      "DEN": "/team-logos/Denver_Broncos_logo.svg.png",
-      "DET": "/team-logos/Detroit_Lions_logo.svg.png",
-      "GB": "/team-logos/Green_Bay_Packers_logo.svg.png",
-      "HOU": "/team-logos/Houston_Texans_logo.svg.png",
-      "IND": "/team-logos/Indianapolis_Colts_logo.svg.png",
-      "JAX": "/team-logos/Jacksonville_Jaguars_logo.svg.png",
-      "JAC": "/team-logos/Jacksonville_Jaguars_logo.svg.png", // Sleeper uses JAC
-      "KC": "/team-logos/Kansas_City_Chiefs_logo.svg.png",
-      "LV": "/team-logos/Las_Vegas_Raiders_logo.svg.png",
-      "LAR": "/team-logos/Los_Angeles_Rams_logo.svg.png",
-      "LAC": "/team-logos/NFL_Chargers_logo.svg.png",
-      "MIA": "/team-logos/Miami_Dolphins_logo.svg.png",
-      "MIN": "/team-logos/Minnesota_Vikings_logo.svg.png",
-      "NE": "/team-logos/New_England_Patriots_logo.svg.png",
-      "NO": "/team-logos/New_Orleans_Saints_logo.svg.png",
-      "NYG": "/team-logos/New_York_Giants_logo.svg.png",
-      "NYJ": "/team-logos/New_York_Jets_logo.svg.png",
-      "PHI": "/team-logos/Philadelphia_Eagles_logo.svg.png",
-      "PIT": "/team-logos/Pittsburgh_Steelers_logo.svg.png",
-      "SF": "/team-logos/San_Francisco_49ers_logo.svg.png",
-      "SEA": "/team-logos/Seattle_Seahawks_logo.svg.png",
-      "TB": "/team-logos/Tampa_Bay_Buccaneers_logo.svg.png",
-      "TEN": "/team-logos/Tennessee_Titans_logo.svg.png",
-      "WAS": "/team-logos/Washington_football_team_wlogo.svg.png",
+      "ARI": "/team_logos/Arizona_Cardinals_logo.svg.png",
+      "ATL": "/team_logos/Atlanta_Falcons_logo.svg.png",
+      "BAL": "/team_logos/Baltimore_Ravens_logo.svg.png",
+      "BUF": "/team_logos/Buffalo_Bills_logo.svg.png",
+      "CAR": "/team_logos/Carolina_Panthers_logo.svg.png",
+      "CHI": "/team_logos/Chicago_Bears_logo.svg.png",
+      "CIN": "/team_logos/Cincinnati_Bengals_logo.svg.png",
+      "CLE": "/team_logos/Cleveland_Browns_logo.svg.png",
+      "DAL": "/team_logos/Dallas_Cowboys.svg.png",
+      "DEN": "/team_logos/Denver_Broncos_logo.svg.png",
+      "DET": "/team_logos/Detroit_Lions_logo.svg.png",
+      "GB": "/team_logos/Green_Bay_Packers_logo.svg.png",
+      "HOU": "/team_logos/Houston_Texans_logo.svg.png",
+      "IND": "/team_logos/Indianapolis_Colts_logo.svg.png",
+      "JAX": "/team_logos/Jacksonville_Jaguars_logo.svg.png",
+      "JAC": "/team_logos/Jacksonville_Jaguars_logo.svg.png", // Sleeper uses JAC
+      "KC": "/team_logos/Kansas_City_Chiefs_logo.svg.png",
+      "LV": "/team_logos/Las_Vegas_Raiders_logo.svg.png",
+      "LAR": "/team_logos/Los_Angeles_Rams_logo.svg.png",
+      "LAC": "/team_logos/NFL_Chargers_logo.svg.png",
+      "MIA": "/team_logos/Miami_Dolphins_logo.svg.png",
+      "MIN": "/team_logos/Minnesota_Vikings_logo.svg.png",
+      "NE": "/team_logos/New_England_Patriots_logo.svg.png",
+      "NO": "/team_logos/New_Orleans_Saints_logo.svg.png",
+      "NYG": "/team_logos/New_York_Giants_logo.svg.png",
+      "NYJ": "/team_logos/New_York_Jets_logo.svg.png",
+      "PHI": "/team_logos/Philadelphia_Eagles_logo.svg.png",
+      "PIT": "/team_logos/Pittsburgh_Steelers_logo.svg.png",
+      "SF": "/team_logos/San_Francisco_49ers_logo.svg.png",
+      "SEA": "/team_logos/Seattle_Seahawks_logo.svg.png",
+      "TB": "/team_logos/Tampa_Bay_Buccaneers_logo.svg.png",
+      "TEN": "/team_logos/Tennessee_Titans_logo.svg.png",
+      "WAS": "/team_logos/Washington_football_team_wlogo.svg.png",
     }
     return teamLogoMap[teamAbbrev.toUpperCase()] || null
   }
@@ -76,9 +75,8 @@ export default function WeeklyRankingsPage() {
           userId: response.user_id || ''
         }))
         setDiscoveredLeagues(leagues)
-        setSuccess(`✅ Found ${leagues.length} leagues.`)
       } else {
-        setError('No leagues found')
+        setDiscoveredLeagues([])
       }
     } catch (err: any) {
       setError(err.message || 'Failed to find leagues')
@@ -123,7 +121,7 @@ export default function WeeklyRankingsPage() {
     }
   }
 
-  const renderPlayerWithLogo = (player: any, rosterSlot?: string, waiverIndicator?: string, freeAgent?: boolean, upgradeInfo?: string) => {
+  const renderPlayerWithLogo = (player: any, rosterSlot?: string, waiverIndicator?: string, freeAgent?: boolean, upgradeInfo?: string, cardStyle?: React.CSSProperties | Record<string, any>) => {
     const logoPath = getTeamLogoPath(player.team || player.get?.('team', ''))
     let positionDisplay = player.position_with_rank || player.position
     
@@ -137,7 +135,7 @@ export default function WeeklyRankingsPage() {
     const statusClass = freeAgent ? 'status-free-agent' : player.is_on_roster ? 'status-on-roster' : ''
     
     return (
-      <div className="player-card fade-in" style={{ marginBottom: 'var(--spacing-sm)' }}>
+      <div className="player-card fade-in" style={{ marginBottom: 'var(--spacing-sm)', ...cardStyle }}>
         {logoPath && (
           <div className="player-logo-container">
             <Image 
@@ -227,11 +225,6 @@ export default function WeeklyRankingsPage() {
             <span>{error}</span>
           </div>
         )}
-        {success && (
-          <div className="message message-success">
-            <span>{success}</span>
-          </div>
-        )}
 
         <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 'var(--spacing-2xl)', marginTop: 'var(--spacing-xl)' }}>
           {/* Sidebar */}
@@ -267,17 +260,17 @@ export default function WeeklyRankingsPage() {
               </button>
             </div>
 
-            {discoveredLeagues.length > 0 && (
-              <div>
-                <p style={{ 
-                  fontSize: '0.875rem', 
-                  color: 'var(--text-secondary)', 
-                  marginBottom: 'var(--spacing-md)',
-                  fontWeight: 500
-                }}>
-                  Your Leagues:
-                </p>
-                {discoveredLeagues.map((league) => (
+            <div>
+              <p style={{ 
+                fontSize: '0.875rem', 
+                color: 'var(--text-secondary)', 
+                marginBottom: 'var(--spacing-md)',
+                fontWeight: 500
+              }}>
+                Your Leagues:
+              </p>
+              {discoveredLeagues.length > 0 ? (
+                discoveredLeagues.map((league) => (
                   <button
                     key={league.id}
                     className="btn"
@@ -290,9 +283,21 @@ export default function WeeklyRankingsPage() {
                   >
                     {league.name}
                   </button>
-                ))}
-              </div>
-            )}
+                ))
+              ) : (
+                <div style={{
+                  padding: 'var(--spacing-lg)',
+                  textAlign: 'center',
+                  color: 'var(--text-tertiary)',
+                  fontSize: '0.875rem',
+                  background: 'var(--bg-tertiary)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-light)'
+                }}>
+                  {username.trim() ? 'No leagues found' : 'Enter your username and click "Find my leagues"'}
+                </div>
+              )}
+            </div>
           </aside>
 
           {/* Main Content */}
@@ -645,32 +650,16 @@ export default function WeeklyRankingsPage() {
                           </h5>
                           {rosAnalysis.worst_drops && rosAnalysis.worst_drops.length > 0 ? (
                             rosAnalysis.worst_drops.slice(0, 8).map((player: any, idx: number) => {
-                              const logoPath = getTeamLogoPath(player.team)
                               return (
-                                <div 
-                                  key={idx} 
-                                  className="player-card"
-                                  style={{ 
+                                <div key={idx}>
+                                  {renderPlayerWithLogo({
+                                    ...player,
+                                    rank: player.rank,
+                                    position_rank: player.position_rank || ''
+                                  }, undefined, undefined, undefined, undefined, {
                                     background: 'rgba(239, 68, 68, 0.05)',
-                                    borderColor: 'rgba(239, 68, 68, 0.2)',
-                                    padding: 'var(--spacing-sm)'
-                                  }}
-                                >
-                                  {logoPath && (
-                                    <div className="player-logo-container" style={{ width: '32px', height: '32px' }}>
-                                      <Image src={logoPath} alt={player.team} width={24} height={24} />
-                                    </div>
-                                  )}
-                                  <div className="player-content">
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', flexWrap: 'wrap' }}>
-                                      <span className={`position-tag ${player.position}`}>
-                                        {player.position}
-                                      </span>
-                                      <span className="badge">#{player.rank}</span>
-                                      <span style={{ fontSize: '0.8125rem', fontWeight: 600 }}>{player.name}</span>
-                                      <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>({player.team})</span>
-                                    </div>
-                                  </div>
+                                    borderColor: 'rgba(239, 68, 68, 0.2)'
+                                  })}
                                 </div>
                               )
                             })
@@ -692,32 +681,16 @@ export default function WeeklyRankingsPage() {
                           </h5>
                           {rosAnalysis.best_adds && rosAnalysis.best_adds.length > 0 ? (
                             rosAnalysis.best_adds.slice(0, 8).map((player: any, idx: number) => {
-                              const logoPath = getTeamLogoPath(player.team)
                               return (
-                                <div 
-                                  key={idx} 
-                                  className="player-card"
-                                  style={{ 
+                                <div key={idx}>
+                                  {renderPlayerWithLogo({
+                                    ...player,
+                                    rank: player.rank,
+                                    position_rank: player.position_rank || ''
+                                  }, undefined, undefined, undefined, undefined, {
                                     background: 'rgba(16, 185, 129, 0.05)',
-                                    borderColor: 'rgba(16, 185, 129, 0.2)',
-                                    padding: 'var(--spacing-sm)'
-                                  }}
-                                >
-                                  {logoPath && (
-                                    <div className="player-logo-container" style={{ width: '32px', height: '32px' }}>
-                                      <Image src={logoPath} alt={player.team} width={24} height={24} />
-                                    </div>
-                                  )}
-                                  <div className="player-content">
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', flexWrap: 'wrap' }}>
-                                      <span className={`position-tag ${player.position}`}>
-                                        {player.position}
-                                      </span>
-                                      <span className="badge">#{player.rank}</span>
-                                      <span style={{ fontSize: '0.8125rem', fontWeight: 600 }}>{player.name}</span>
-                                      <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>({player.team})</span>
-                                    </div>
-                                  </div>
+                                    borderColor: 'rgba(16, 185, 129, 0.2)'
+                                  })}
                                 </div>
                               )
                             })

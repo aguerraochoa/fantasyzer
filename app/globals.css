@@ -578,7 +578,7 @@ p {
   gap: var(--spacing-xs);
   border-bottom: 1px solid var(--border-light);
   margin-bottom: var(--spacing-lg);
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 .tab {
@@ -590,13 +590,13 @@ p {
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: border-bottom-color var(--transition-base);
   white-space: nowrap;
   position: relative;
   margin-bottom: -1px;
 }
 
-.tab:hover {
+.tab:hover:not(.tab-active) {
   color: var(--text-primary);
   background: var(--bg-hover);
 }
@@ -605,6 +605,7 @@ p {
   color: var(--accent-primary);
   border-bottom-color: var(--accent-primary);
   font-weight: 600;
+  transition: none;
 }
 
 .tab-content {
