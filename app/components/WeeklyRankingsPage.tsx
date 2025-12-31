@@ -133,12 +133,42 @@ export default function WeeklyRankingsPage() {
     const positionDisplay = player.position_with_rank || player.position
     
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '12px', 
+        marginBottom: '12px',
+        padding: '8px',
+        borderRadius: '8px',
+        backgroundColor: '#f9fafb'
+      }}>
         {logoPath && (
-          <Image src={logoPath} alt={player.team || ''} width={30} height={30} />
+          <div style={{ 
+            flexShrink: 0,
+            width: '40px',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#ffffff',
+            borderRadius: '6px',
+            padding: '4px'
+          }}>
+            <Image 
+              src={logoPath} 
+              alt={player.team || ''} 
+              width={32} 
+              height={32}
+              style={{
+                objectFit: 'contain',
+                maxWidth: '100%',
+                maxHeight: '100%'
+              }}
+            />
+          </div>
         )}
-        <div>
-          <div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ lineHeight: '1.5' }}>
             {slotText && <strong>{rosterSlot} </strong>}
             <strong>{player.name}</strong> ({positionDisplay}) - {player.team || ''} - <strong>Rank #{player.rank}</strong>
             {waiverIndicator}
@@ -387,32 +417,98 @@ export default function WeeklyRankingsPage() {
                       
                       <h5>➖ DROP (Worst on Roster)</h5>
                       {rosAnalysis.worst_drops && rosAnalysis.worst_drops.length > 0 ? (
-                        rosAnalysis.worst_drops.slice(0, 8).map((player: any, idx: number) => (
-                          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                            {getTeamLogoPath(player.team) && (
-                              <Image src={getTeamLogoPath(player.team)!} alt={player.team} width={30} height={30} />
-                            )}
-                            <div>
-                              <strong>{player.position}</strong> Rank #{player.rank} - {player.name} ({player.team})
+                        rosAnalysis.worst_drops.slice(0, 8).map((player: any, idx: number) => {
+                          const logoPath = getTeamLogoPath(player.team)
+                          return (
+                            <div key={idx} style={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: '12px', 
+                              marginBottom: '8px',
+                              padding: '6px',
+                              borderRadius: '6px',
+                              backgroundColor: '#f9fafb'
+                            }}>
+                              {logoPath && (
+                                <div style={{ 
+                                  flexShrink: 0,
+                                  width: '32px',
+                                  height: '32px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  backgroundColor: '#ffffff',
+                                  borderRadius: '4px',
+                                  padding: '2px'
+                                }}>
+                                  <Image 
+                                    src={logoPath} 
+                                    alt={player.team} 
+                                    width={28} 
+                                    height={28}
+                                    style={{
+                                      objectFit: 'contain',
+                                      maxWidth: '100%',
+                                      maxHeight: '100%'
+                                    }}
+                                  />
+                                </div>
+                              )}
+                              <div>
+                                <strong>{player.position}</strong> Rank #{player.rank} - {player.name} ({player.team})
+                              </div>
                             </div>
-                          </div>
-                        ))
+                          )
+                        })
                       ) : (
                         <div className="message message-info">No players to drop</div>
                       )}
                       
                       <h5 style={{ marginTop: '16px' }}>➕ ADD (Best Available)</h5>
                       {rosAnalysis.best_adds && rosAnalysis.best_adds.length > 0 ? (
-                        rosAnalysis.best_adds.slice(0, 8).map((player: any, idx: number) => (
-                          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                            {getTeamLogoPath(player.team) && (
-                              <Image src={getTeamLogoPath(player.team)!} alt={player.team} width={30} height={30} />
-                            )}
-                            <div>
-                              <strong>{player.position}</strong> Rank #{player.rank} - {player.name} ({player.team})
+                        rosAnalysis.best_adds.slice(0, 8).map((player: any, idx: number) => {
+                          const logoPath = getTeamLogoPath(player.team)
+                          return (
+                            <div key={idx} style={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: '12px', 
+                              marginBottom: '8px',
+                              padding: '6px',
+                              borderRadius: '6px',
+                              backgroundColor: '#f9fafb'
+                            }}>
+                              {logoPath && (
+                                <div style={{ 
+                                  flexShrink: 0,
+                                  width: '32px',
+                                  height: '32px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  backgroundColor: '#ffffff',
+                                  borderRadius: '4px',
+                                  padding: '2px'
+                                }}>
+                                  <Image 
+                                    src={logoPath} 
+                                    alt={player.team} 
+                                    width={28} 
+                                    height={28}
+                                    style={{
+                                      objectFit: 'contain',
+                                      maxWidth: '100%',
+                                      maxHeight: '100%'
+                                    }}
+                                  />
+                                </div>
+                              )}
+                              <div>
+                                <strong>{player.position}</strong> Rank #{player.rank} - {player.name} ({player.team})
+                              </div>
                             </div>
-                          </div>
-                        ))
+                          )
+                        })
                       ) : (
                         <div className="message message-info">No free agents found</div>
                       )}
