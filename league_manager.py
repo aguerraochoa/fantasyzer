@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-League Manager for Fantasy Draft Tool
+League Manager for Fantasyzer
 Handles saving, loading, editing, and managing multiple league draft URLs
 """
 

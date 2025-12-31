@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Fantasy Draft Tool
+Fantasyzer
 Reads FantasyPros CSV rankings and displays top 3 players per position
 with both overall and position-specific rankings.
 """
@@ -1725,7 +1725,7 @@ class FantasyDraftTool:
     def display_draft_board(self) -> None:
         """Display the draft board with top 3 players per position"""
         print("\n" + "="*80)
-        print("FANTASY DRAFT BOARD - TOP 3 PLAYERS PER POSITION")
+        print("FANTASYZER DRAFT BOARD - TOP 3 PLAYERS PER POSITION")
         print("="*80)
         
         # Define fantasy positions in order of importance
@@ -1791,9 +1791,9 @@ class FantasyDraftTool:
         print(f"Drafted: {'Yes' if player.drafted else 'No'}")
 
 def main():
-    """Main function to run the fantasy draft tool"""
-    print("Fantasy Draft Tool")
-    print("==================")
+    """Main function to run Fantasyzer"""
+    print("Fantasyzer")
+    print("==========")
     
     # You'll need to update this path to your CSV file
     csv_file = "draft.csv"  # Update this path

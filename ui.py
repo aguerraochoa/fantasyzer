@@ -10,7 +10,7 @@ from fantasy_draft_tool import FantasyDraftTool, Player
 from league_manager import LeagueManager
 
 
-st.set_page_config(page_title="Fantasy Draft Tool", layout="wide")  # Updated styling
+st.set_page_config(page_title="Fantasyzer", layout="wide")  # Updated styling
 
 
 def initialize_session_state() -> None:
@@ -725,7 +725,7 @@ def render_navigation() -> None:
             st.rerun()
     
     with col2:
-        st.markdown('<div style="text-align: center; padding: 10px; color: #9ca3af;">Fantasy Football Tool</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: center; padding: 10px; color: #9ca3af;">Fantasyzer</div>', unsafe_allow_html=True)
 
 
 def render_weekly_rankings_sidebar() -> None:
@@ -1207,7 +1207,7 @@ def render_draft_assistant_page() -> None:
     if draft_tool.sleeper_draft_id:
         col_title, col_refresh = st.columns([0.7, 0.3])
         with col_title:
-            st.markdown('<div class="app-title">Fantasy Draft Tool</div>', unsafe_allow_html=True)
+            st.markdown('<div class="app-title">Fantasyzer</div>', unsafe_allow_html=True)
             st.markdown('<div class="app-caption">Load FantasyPros rankings and manage multiple fantasy leagues with Sleeper integration.</div>', unsafe_allow_html=True)
         with col_refresh:
             if st.button("🔄 Refresh Draft Picks", use_container_width=True):
@@ -1216,7 +1216,7 @@ def render_draft_assistant_page() -> None:
                 st.success("✅ Draft picks refreshed!")
                 st.rerun()
     else:
-        st.markdown('<div class="app-title">Fantasy Draft Tool</div>', unsafe_allow_html=True)
+        st.markdown('<div class="app-title">Fantasyzer</div>', unsafe_allow_html=True)
         st.markdown('<div class="app-caption">Load FantasyPros rankings and manage multiple fantasy leagues with Sleeper integration.</div>', unsafe_allow_html=True)
 
     render_top_overall(draft_tool)
