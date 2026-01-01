@@ -21,9 +21,10 @@ interface PlayerCardProps {
   player: Player
   index?: number
   sleeperPlayers?: Record<string, any>
+  hideInjuryOnMobile?: boolean
 }
 
-export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCardProps) {
+export default function PlayerCard({ player, index, sleeperPlayers, hideInjuryOnMobile = false }: PlayerCardProps) {
   // Format player name: "Dak Prescott" -> "D. Prescott" (mobile) or "Dak Prescott" (desktop)
   const formatPlayerName = (name: string, isDefense: boolean = false): { desktop: string, mobile: string } => {
     if (isDefense) {
@@ -155,17 +156,19 @@ export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCard
           <span className="badge">{player.position}#{player.position_rank}</span>
           {player.tier && <span className="badge">T{player.tier}</span>}
           {player.bye_week > 0 && <span className="badge">Bye {player.bye_week}</span>}
+          {injury && (
+            <span 
+              className={`badge ${hideInjuryOnMobile ? 'desktop-only' : ''}`}
+              style={{ 
+                background: 'rgba(239, 68, 68, 0.1)',
+                color: 'var(--accent-error)',
+                border: '1px solid rgba(239, 68, 68, 0.2)'
+              }}
+            >
+              {injury}
+            </span>
+          )}
         </div>
-        {injury && (
-          <span style={{ 
-            fontSize: '0.75rem',
-            color: 'var(--accent-error)',
-            fontWeight: 500,
-            whiteSpace: 'nowrap'
-          }}>
-            ⚠️ {injury}
-          </span>
-        )}
       </div>
     </div>
   )

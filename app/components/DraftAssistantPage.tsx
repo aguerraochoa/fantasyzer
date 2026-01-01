@@ -560,6 +560,7 @@ export default function DraftAssistantPage() {
                     player={player}
                     index={idx + 1}
                     sleeperPlayers={sleeperPlayers}
+                    hideInjuryOnMobile={true}
                   />
                 ))}
 
@@ -580,6 +581,7 @@ export default function DraftAssistantPage() {
                         key={`${player.name}-${player.overall_rank}`}
                         player={player}
                         sleeperPlayers={sleeperPlayers}
+                        hideInjuryOnMobile={true}
                       />
                     ))}
                   </div>
@@ -595,6 +597,7 @@ export default function DraftAssistantPage() {
                         player={player}
                         index={idx + 1}
                         sleeperPlayers={sleeperPlayers}
+                        hideInjuryOnMobile={true}
                       />
                     ))}
                   </div>
@@ -606,6 +609,7 @@ export default function DraftAssistantPage() {
                         player={player}
                         index={idx + 1}
                         sleeperPlayers={sleeperPlayers}
+                        hideInjuryOnMobile={true}
                       />
                     ))}
                   </div>
@@ -617,6 +621,7 @@ export default function DraftAssistantPage() {
                         player={player}
                         index={idx + 1}
                         sleeperPlayers={sleeperPlayers}
+                        hideInjuryOnMobile={true}
                       />
                     ))}
                   </div>
@@ -628,6 +633,7 @@ export default function DraftAssistantPage() {
                         player={player}
                         index={idx + 1}
                         sleeperPlayers={sleeperPlayers}
+                        hideInjuryOnMobile={true}
                       />
                     ))}
                   </div>
