@@ -139,6 +139,41 @@ export default function WeeklyRankingsPage() {
     const positionText = positionDisplay ? `(${positionDisplay})` : ''
     const statusClass = freeAgent ? 'status-free-agent' : player.is_on_roster ? 'status-on-roster' : ''
     
+    // Format player name for mobile: "Dak Prescott" -> "D. Prescott" (mobile) or "Dak Prescott" (desktop)
+    // For defenses: "Pittsburgh Steelers" -> "Steelers" (mobile), "Los Angeles Rams" -> "Rams"
+    const formatPlayerName = (name: string, isDefense: boolean = false): { desktop: string, mobile: string } => {
+      if (isDefense) {
+        // For defenses, remove city: "Pittsburgh Steelers" -> "Steelers", "Los Angeles Rams" -> "Rams"
+        // Team name is typically the last word (or last two words for rare cases)
+        const parts = name.trim().split(' ')
+        if (parts.length > 1) {
+          // Take the last word as the team name (works for most teams)
+          // For teams with two-word names like "Green Bay Packers", this still works (just "Packers")
+          const teamName = parts[parts.length - 1]
+          return {
+            desktop: name,
+            mobile: teamName
+          }
+        }
+        return { desktop: name, mobile: name }
+      } else {
+        // For players, use first initial: "Dak Prescott" -> "D. Prescott"
+        const parts = name.trim().split(' ')
+        if (parts.length >= 2) {
+          const firstName = parts[0]
+          const lastName = parts.slice(1).join(' ')
+          return {
+            desktop: name,
+            mobile: `${firstName[0]}. ${lastName}`
+          }
+        }
+        return { desktop: name, mobile: name }
+      }
+    }
+    
+    const isDefense = player.position === 'DEF' || player.position === 'DST' || rosterSlot === 'DEF'
+    const nameFormats = formatPlayerName(player.name, isDefense)
+    
     return (
       <div className="player-card fade-in" style={{ marginBottom: 'var(--spacing-sm)', ...cardStyle }}>
         {logoPath && (
@@ -173,7 +208,10 @@ export default function WeeklyRankingsPage() {
                 {rosterSlot}
               </span>
             )}
-            <strong style={{ fontSize: '0.9375rem', fontWeight: 600 }}>{player.name}</strong>
+            <strong style={{ fontSize: '0.9375rem', fontWeight: 600 }}>
+              <span className="desktop-only">{nameFormats.desktop}</span>
+              <span className="mobile-only">{nameFormats.mobile}</span>
+            </strong>
             {positionText && (
               <span style={{ 
                 color: 'var(--text-tertiary)',

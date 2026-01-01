@@ -656,7 +656,39 @@ export default function DraftAssistantPage() {
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>
-                                {player.name}
+                                {(() => {
+                                  // Format player name for mobile
+                                  const isDefense = player.position === 'DEF' || player.position === 'DST'
+                                  if (isDefense) {
+                                    // For defenses, remove city: "Pittsburgh Steelers" -> "Steelers", "Los Angeles Rams" -> "Rams"
+                                    const parts = player.name.trim().split(' ')
+                                    if (parts.length > 1) {
+                                      // Take the last word as the team name
+                                      const teamName = parts[parts.length - 1]
+                                      return (
+                                        <>
+                                          <span className="desktop-only">{player.name}</span>
+                                          <span className="mobile-only">{teamName}</span>
+                                        </>
+                                      )
+                                    }
+                                    return player.name
+                                  } else {
+                                    // For players, use first initial: "Dak Prescott" -> "D. Prescott"
+                                    const parts = player.name.trim().split(' ')
+                                    if (parts.length >= 2) {
+                                      const firstName = parts[0]
+                                      const lastName = parts.slice(1).join(' ')
+                                      return (
+                                        <>
+                                          <span className="desktop-only">{player.name}</span>
+                                          <span className="mobile-only">{firstName[0]}. {lastName}</span>
+                                        </>
+                                      )
+                                    }
+                                    return player.name
+                                  }
+                                })()}
                               </div>
                               <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                                 {player.team} • {player.position} #{player.position_rank}

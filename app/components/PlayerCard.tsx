@@ -24,6 +24,41 @@ interface PlayerCardProps {
 }
 
 export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCardProps) {
+  // Format player name: "Dak Prescott" -> "D. Prescott" (mobile) or "Dak Prescott" (desktop)
+  const formatPlayerName = (name: string, isDefense: boolean = false): { desktop: string, mobile: string } => {
+    if (isDefense) {
+      // For defenses, remove city: "Pittsburgh Steelers" -> "Steelers", "Los Angeles Rams" -> "Rams"
+      // Team name is typically the last word (or last two words for rare cases)
+      // Remove everything except the last word(s) which is the team name
+      const parts = name.trim().split(' ')
+      if (parts.length > 1) {
+        // Take the last word as the team name (works for most teams)
+        // For teams with two-word names like "Green Bay Packers", this still works (just "Packers")
+        const teamName = parts[parts.length - 1]
+        return {
+          desktop: name,
+          mobile: teamName
+        }
+      }
+      return { desktop: name, mobile: name }
+    } else {
+      // For players, use first initial: "Dak Prescott" -> "D. Prescott"
+      const parts = name.trim().split(' ')
+      if (parts.length >= 2) {
+        const firstName = parts[0]
+        const lastName = parts.slice(1).join(' ')
+        return {
+          desktop: name,
+          mobile: `${firstName[0]}. ${lastName}`
+        }
+      }
+      return { desktop: name, mobile: name }
+    }
+  }
+  
+  const isDefense = player.position === 'DEF' || player.position === 'DST'
+  const nameFormats = formatPlayerName(player.name, isDefense)
+  
   const getTeamLogoPath = (teamAbbrev: string): string | null => {
     if (!teamAbbrev) return null
     
@@ -98,7 +133,10 @@ export default function PlayerCard({ player, index, sleeperPlayers }: PlayerCard
       <div className="player-content">
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', flexWrap: 'wrap', flex: 1 }}>
           {index !== undefined && <span className="num-badge">{index}</span>}
-          <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>{player.name}</span>
+          <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>
+            <span className="desktop-only">{nameFormats.desktop}</span>
+            <span className="mobile-only">{nameFormats.mobile}</span>
+          </span>
           {player.team && (
             <span style={{ 
               color: 'var(--text-tertiary)',
