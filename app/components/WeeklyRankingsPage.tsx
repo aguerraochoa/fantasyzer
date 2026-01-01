@@ -141,33 +141,39 @@ export default function WeeklyRankingsPage() {
     
     // Format player name for mobile: "Dak Prescott" -> "D. Prescott" (mobile) or "Dak Prescott" (desktop)
     // For defenses: "Pittsburgh Steelers" -> "Steelers" (mobile), "Los Angeles Rams" -> "Rams"
+    // Preserves emojis like 🔄 at the start of names
     const formatPlayerName = (name: string, isDefense: boolean = false): { desktop: string, mobile: string } => {
+      // Check if name starts with 🔄 emoji
+      const hasRefreshEmoji = name.startsWith('🔄 ')
+      const emoji = hasRefreshEmoji ? '🔄 ' : ''
+      const nameWithoutEmoji = hasRefreshEmoji ? name.substring(2).trim() : name
+      
       if (isDefense) {
         // For defenses, remove city: "Pittsburgh Steelers" -> "Steelers", "Los Angeles Rams" -> "Rams"
         // Team name is typically the last word (or last two words for rare cases)
-        const parts = name.trim().split(' ')
+        const parts = nameWithoutEmoji.trim().split(' ')
         if (parts.length > 1) {
           // Take the last word as the team name (works for most teams)
           // For teams with two-word names like "Green Bay Packers", this still works (just "Packers")
           const teamName = parts[parts.length - 1]
           return {
             desktop: name,
-            mobile: teamName
+            mobile: emoji + teamName
           }
         }
-        return { desktop: name, mobile: name }
+        return { desktop: name, mobile: emoji + nameWithoutEmoji }
       } else {
         // For players, use first initial: "Dak Prescott" -> "D. Prescott"
-        const parts = name.trim().split(' ')
+        const parts = nameWithoutEmoji.trim().split(' ')
         if (parts.length >= 2) {
           const firstName = parts[0]
           const lastName = parts.slice(1).join(' ')
           return {
             desktop: name,
-            mobile: `${firstName[0]}. ${lastName}`
+            mobile: emoji + `${firstName[0]}. ${lastName}`
           }
         }
-        return { desktop: name, mobile: name }
+        return { desktop: name, mobile: emoji + nameWithoutEmoji }
       }
     }
     
@@ -731,7 +737,7 @@ export default function WeeklyRankingsPage() {
                                     fontWeight: 600,
                                     textTransform: 'uppercase'
                                   }}>
-                                    DROP:
+                                    SIT:
                                   </div>
                                   {renderPlayerWithLogo(upgrade.drop, upgrade.drop.position)}
                                 </div>
@@ -743,7 +749,7 @@ export default function WeeklyRankingsPage() {
                                     fontWeight: 600,
                                     textTransform: 'uppercase'
                                   }}>
-                                    ADD:
+                                    START:
                                   </div>
                                   {renderPlayerWithLogo(upgrade.add, upgrade.add.position)}
                                 </div>

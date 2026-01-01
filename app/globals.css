@@ -563,14 +563,14 @@ p {
   
   .container {
     padding: 0 var(--spacing-md);
-    padding-top: var(--spacing-md);
+    padding-top: var(--spacing-sm) !important;
     padding-bottom: calc(var(--spacing-2xl) + 60px); /* Space for bottom nav */
   }
   
   .main-layout {
     grid-template-columns: 1fr !important;
     gap: 0 !important;
-    margin-top: var(--spacing-md) !important;
+    margin-top: var(--spacing-sm) !important;
   }
   
   .desktop-sidebar {
