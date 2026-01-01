@@ -155,7 +155,7 @@ export default function DraftAssistantPage() {
           marginTop: 'var(--spacing-xl)'
         }} className="main-layout">
           {/* Sidebar */}
-          <aside className="sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
+          <aside className="sidebar desktop-sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
             <h3 style={{ marginBottom: 'var(--spacing-lg)', fontSize: '1.125rem', fontWeight: 600 }}>Setup</h3>
             
             <div style={{ marginBottom: 'var(--spacing-xl)' }}>
@@ -312,7 +312,7 @@ export default function DraftAssistantPage() {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
                   <span style={{ fontSize: '1.25rem' }}>⚙️</span>
-                  <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>Setup</span>
+                  <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>League Setup</span>
                   {loadingLeagues && <div className="spinner-small" style={{ marginLeft: 'var(--spacing-sm)' }}></div>}
                 </div>
                 <span style={{ fontSize: '1.25rem', transition: 'transform var(--transition-base)', transform: setupExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
@@ -371,9 +371,12 @@ export default function DraftAssistantPage() {
                     paddingTop: 'var(--spacing-xl)',
                     marginBottom: 'var(--spacing-xl)'
                   }}>
-                    <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>
-                      Sleeper Discovery
+                    <h4 style={{ marginBottom: 'var(--spacing-sm)', fontSize: '0.9375rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                      Discover Your Leagues
                     </h4>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginBottom: 'var(--spacing-sm)' }}>
+                      Enter your Sleeper username to find your leagues
+                    </p>
                     <input
                       type="text"
                       className="input"
@@ -481,10 +484,10 @@ export default function DraftAssistantPage() {
 
             {players.length === 0 ? (
               <div className="card" style={{ textAlign: 'center', padding: 'var(--spacing-2xl)' }}>
-                <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-lg)' }}>👈</div>
+                <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-lg)' }}>👆</div>
                 <h3 style={{ marginBottom: 'var(--spacing-md)' }}>Get Started</h3>
                 <p style={{ marginBottom: 'var(--spacing-xl)', color: 'var(--text-secondary)' }}>
-                  Use the sidebar to load FantasyPros rankings
+                  Click "League Setup" above to load FantasyPros rankings
                 </p>
                 <div style={{ textAlign: 'left', maxWidth: '500px', margin: '0 auto' }}>
                   <h4 style={{ marginBottom: 'var(--spacing-md)' }}>Quick Start:</h4>

@@ -434,10 +434,10 @@ export default function WeeklyRankingsPage() {
 
             {!selectedLeague ? (
               <div className="card" style={{ textAlign: 'center', padding: 'var(--spacing-2xl)', maxWidth: '600px' }}>
-                <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-lg)' }}>👈</div>
+                <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-lg)' }}>👆</div>
                 <h3 style={{ marginBottom: 'var(--spacing-md)' }}>Discover Your Leagues</h3>
                 <p style={{ color: 'var(--text-secondary)' }}>
-                  Use the sidebar to enter your Sleeper username and discover your leagues.
+                  Click "League Setup" above to enter your Sleeper username and discover your leagues.
                 </p>
               </div>
             ) : (
