@@ -757,6 +757,25 @@ p {
   }
 }
 
+/* Desktop-only and mobile-only utilities */
+.desktop-only {
+  display: inline;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+  
+  .mobile-only {
+    display: inline;
+  }
+}
+
 @media (min-width: 769px) {
   .mobile-setup-section {
     display: none !important;

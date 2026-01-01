@@ -437,7 +437,8 @@ export default function WeeklyRankingsPage() {
                 <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-lg)' }}>👆</div>
                 <h3 style={{ marginBottom: 'var(--spacing-md)' }}>Discover Your Leagues</h3>
                 <p style={{ color: 'var(--text-secondary)' }}>
-                  Click "League Setup" above to enter your Sleeper username and discover your leagues.
+                  <span className="desktop-only">Use the sidebar to enter your Sleeper username and discover your leagues.</span>
+                  <span className="mobile-only">Click "League Setup" above to enter your Sleeper username and discover your leagues.</span>
                 </p>
               </div>
             ) : (

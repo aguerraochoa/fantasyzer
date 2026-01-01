@@ -487,7 +487,8 @@ export default function DraftAssistantPage() {
                 <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-lg)' }}>👆</div>
                 <h3 style={{ marginBottom: 'var(--spacing-md)' }}>Get Started</h3>
                 <p style={{ marginBottom: 'var(--spacing-xl)', color: 'var(--text-secondary)' }}>
-                  Click "League Setup" above to load FantasyPros rankings
+                  <span className="desktop-only">Use the sidebar to load FantasyPros rankings</span>
+                  <span className="mobile-only">Click "League Setup" above to load FantasyPros rankings</span>
                 </p>
                 <div style={{ textAlign: 'left', maxWidth: '500px', margin: '0 auto' }}>
                   <h4 style={{ marginBottom: 'var(--spacing-md)' }}>Quick Start:</h4>
