@@ -606,58 +606,75 @@ export default function WeeklyRankingsPage() {
                         </div>
                       )}
                       
-                      <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-                        <h4 style={{ 
-                          marginBottom: 'var(--spacing-md)',
-                          fontSize: '1rem',
-                          fontWeight: 600
-                        }}>
-                          💡 Waiver Wire Suggestions
-                        </h4>
+                      {(() => {
+                        // Check if there are any waiver suggestions to show
+                        const hasDefenses = rosterSettings.DEF > 0 && 
+                          analysis.waiver_suggestions?.defenses && 
+                          analysis.waiver_suggestions.defenses.length > 0
+                        const hasKickers = rosterSettings.K > 0 && 
+                          analysis.waiver_suggestions?.kickers && 
+                          analysis.waiver_suggestions.kickers.length > 0
                         
-                        {rosterSettings.DEF > 0 && analysis.waiver_suggestions?.defenses && (
-                          <>
-                            <h5 style={{ 
-                              marginBottom: 'var(--spacing-sm)',
-                              fontSize: '0.875rem',
-                              color: 'var(--text-secondary)',
+                        // Only show the section if there's at least one suggestion
+                        if (!hasDefenses && !hasKickers) {
+                          return null
+                        }
+                        
+                        return (
+                          <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
+                            <h4 style={{ 
+                              marginBottom: 'var(--spacing-md)',
+                              fontSize: '1rem',
                               fontWeight: 600
                             }}>
-                              Top 5 Defenses
-                            </h5>
-                            {analysis.waiver_suggestions.defenses.slice(0, 5).map((defense: any, idx: number) => {
-                              const status = defense.is_on_roster ? 'On Your Roster' : 'Free Agent'
-                              return (
-                                <div key={idx}>
-                                  {renderPlayerWithLogo({...defense, position: 'DEF'}, 'DEF', ` (${status})`)}
-                                </div>
-                              )
-                            })}
-                          </>
-                        )}
-                        
-                        {rosterSettings.K > 0 && analysis.waiver_suggestions?.kickers && (
-                          <>
-                            <h5 style={{ 
-                              marginTop: 'var(--spacing-md)',
-                              marginBottom: 'var(--spacing-sm)',
-                              fontSize: '0.875rem',
-                              color: 'var(--text-secondary)',
-                              fontWeight: 600
-                            }}>
-                              Top 5 Kickers
-                            </h5>
-                            {analysis.waiver_suggestions.kickers.slice(0, 5).map((kicker: any, idx: number) => {
-                              const status = kicker.is_on_roster ? 'On Your Roster' : 'Free Agent'
-                              return (
-                                <div key={idx}>
-                                  {renderPlayerWithLogo({...kicker, position: 'K'}, 'K', ` (${status})`)}
-                                </div>
-                              )
-                            })}
-                          </>
-                        )}
-                      </div>
+                              💡 Waiver Wire Suggestions
+                            </h4>
+                            
+                            {hasDefenses && (
+                              <>
+                                <h5 style={{ 
+                                  marginBottom: 'var(--spacing-sm)',
+                                  fontSize: '0.875rem',
+                                  color: 'var(--text-secondary)',
+                                  fontWeight: 600
+                                }}>
+                                  Top 5 Defenses
+                                </h5>
+                                {analysis.waiver_suggestions.defenses.slice(0, 5).map((defense: any, idx: number) => {
+                                  const status = defense.is_on_roster ? 'On Your Roster' : 'Free Agent'
+                                  return (
+                                    <div key={idx}>
+                                      {renderPlayerWithLogo({...defense, position: 'DEF'}, 'DEF', ` (${status})`)}
+                                    </div>
+                                  )
+                                })}
+                              </>
+                            )}
+                            
+                            {hasKickers && (
+                              <>
+                                <h5 style={{ 
+                                  marginTop: hasDefenses ? 'var(--spacing-md)' : 0,
+                                  marginBottom: 'var(--spacing-sm)',
+                                  fontSize: '0.875rem',
+                                  color: 'var(--text-secondary)',
+                                  fontWeight: 600
+                                }}>
+                                  Top 5 Kickers
+                                </h5>
+                                {analysis.waiver_suggestions.kickers.slice(0, 5).map((kicker: any, idx: number) => {
+                                  const status = kicker.is_on_roster ? 'On Your Roster' : 'Free Agent'
+                                  return (
+                                    <div key={idx}>
+                                      {renderPlayerWithLogo({...kicker, position: 'K'}, 'K', ` (${status})`)}
+                                    </div>
+                                  )
+                                })}
+                              </>
+                            )}
+                          </div>
+                        )
+                      })()}
                     </div>
                   )}
 
@@ -678,13 +695,9 @@ export default function WeeklyRankingsPage() {
                           const slotLabel = ['SUPER_FLEX', 'FLEX', 'WRRBTE_FLEX', 'WRRB_FLEX'].includes(rosterSlot) ? 'FLEX' : rosterSlot
                           
                           if (player.is_free_agent) {
-                            const currentPlayer = player.replaces_player
-                            const upgradeInfo = currentPlayer 
-                              ? `   ↳ Upgrade from: ${currentPlayer.name} (Rank #${currentPlayer.rank}) - Improvement: +${currentPlayer.rank - player.rank} ranks`
-                              : undefined
                             return (
                               <div key={idx}>
-                                {renderPlayerWithLogo({...player, name: `🔄 ${player.name}`}, slotLabel, undefined, true, upgradeInfo)}
+                                {renderPlayerWithLogo({...player, name: `🔄 ${player.name}`}, slotLabel, undefined, true)}
                               </div>
                             )
                           } else {
@@ -697,25 +710,52 @@ export default function WeeklyRankingsPage() {
                         })}
                         
                         {optimalAnalysis.free_agent_upgrades && optimalAnalysis.free_agent_upgrades.length > 0 && (
-                          <div style={{ marginTop: 'var(--spacing-lg)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-light)' }}>
-                            <h4 style={{ marginBottom: 'var(--spacing-sm)', fontSize: '0.9375rem', fontWeight: 600 }}>📈 Free Agent Upgrade Summary</h4>
-                            <div className="message message-success" style={{ marginBottom: 'var(--spacing-md)', padding: 'var(--spacing-sm)' }}>
-                              🚀 <strong>{optimalAnalysis.free_agent_upgrades.length} potential upgrade(s)</strong> with{' '}
-                              <strong>+{optimalAnalysis.free_agent_upgrades.reduce((sum: number, u: any) => sum + u.improvement, 0)} total rank improvement</strong>
-                            </div>
+                          <div style={{ marginTop: 'var(--spacing-xl)', paddingTop: 'var(--spacing-lg)', borderTop: '1px solid var(--border-light)' }}>
+                            <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', fontWeight: 600 }}>🔄 Suggested Changes</h4>
                             {optimalAnalysis.free_agent_upgrades.map((upgrade: any, idx: number) => (
                               <div 
                                 key={idx} 
                                 style={{ 
-                                  marginBottom: 'var(--spacing-sm)',
-                                  padding: 'var(--spacing-sm)',
+                                  marginBottom: 'var(--spacing-md)',
+                                  padding: 'var(--spacing-md)',
                                   background: 'rgba(74, 111, 165, 0.05)',
                                   borderRadius: 'var(--radius-md)',
-                                  border: '1px solid var(--border-light)',
-                                  fontSize: '0.875rem'
+                                  border: '1px solid var(--border-light)'
                                 }}
                               >
-                                <strong>{upgrade.position}</strong>: {upgrade.add.name} (#{upgrade.add.rank}) replaces {upgrade.drop.name} (#{upgrade.drop.rank}) - <strong style={{ color: 'var(--accent-success)' }}>+{upgrade.improvement} ranks</strong>
+                                <div style={{ marginBottom: 'var(--spacing-sm)' }}>
+                                  <div style={{ 
+                                    fontSize: '0.6875rem',
+                                    color: 'var(--text-tertiary)',
+                                    marginBottom: 'var(--spacing-xs)',
+                                    fontWeight: 600,
+                                    textTransform: 'uppercase'
+                                  }}>
+                                    DROP:
+                                  </div>
+                                  {renderPlayerWithLogo(upgrade.drop, upgrade.drop.position)}
+                                </div>
+                                <div style={{ marginBottom: 'var(--spacing-sm)' }}>
+                                  <div style={{ 
+                                    fontSize: '0.6875rem',
+                                    color: 'var(--text-tertiary)',
+                                    marginBottom: 'var(--spacing-xs)',
+                                    fontWeight: 600,
+                                    textTransform: 'uppercase'
+                                  }}>
+                                    ADD:
+                                  </div>
+                                  {renderPlayerWithLogo(upgrade.add, upgrade.add.position)}
+                                </div>
+                                <div style={{ 
+                                  marginTop: 'var(--spacing-sm)',
+                                  paddingTop: 'var(--spacing-sm)',
+                                  borderTop: '1px solid var(--border-light)',
+                                  fontSize: '0.875rem',
+                                  color: 'var(--text-secondary)'
+                                }}>
+                                  <strong style={{ color: 'var(--accent-success)' }}>+{upgrade.improvement} rank improvement</strong>
+                                </div>
                               </div>
                             ))}
                           </div>

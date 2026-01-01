@@ -9,17 +9,17 @@ export default function Navigation() {
   return (
     <nav className="nav">
       <Link 
-        href="/draft" 
-        className={pathname === '/draft' ? 'btn btn-primary' : 'btn'}
-      >
-        Draft Assistant
-      </Link>
-      <div className="nav-center">Fantasyzer</div>
-      <Link 
         href="/" 
         className={pathname === '/' ? 'btn btn-primary' : 'btn'}
       >
         Weekly Rankings
+      </Link>
+      <div className="nav-center">Fantasyzer</div>
+      <Link 
+        href="/draft" 
+        className={pathname === '/draft' ? 'btn btn-primary' : 'btn'}
+      >
+        Draft Assistant
       </Link>
     </nav>
   )
