@@ -70,6 +70,19 @@ export async function refreshDraftPicks(
   return response.json()
 }
 
+// Get current NFL season year (March 1 to end of February)
+// March 1, 2025 to Feb 28, 2026 → returns 2025
+function getCurrentSeasonYear(): number {
+  const now = new Date()
+  // If we're on or after March 1st, use current year
+  // Otherwise, use previous year
+  if (now.getMonth() >= 2) { // getMonth() is 0-indexed, so 2 = March
+    return now.getFullYear()
+  } else {
+    return now.getFullYear() - 1
+  }
+}
+
 export async function getUserLeagues(username: string, seasonYear?: number): Promise<any> {
   // First get user ID
   const userIdResponse = await fetch(`${API_BASE}/leagues`, {
@@ -103,7 +116,7 @@ export async function getUserLeagues(username: string, seasonYear?: number): Pro
     body: JSON.stringify({
       action: 'get_leagues',
       user_id: userId,
-      season_year: seasonYear || new Date().getFullYear(),
+      season_year: seasonYear || getCurrentSeasonYear(),
     }),
   })
   

@@ -20,6 +20,19 @@ export default function WeeklyRankingsPage() {
   const [activeTab, setActiveTab] = useState<string>('start-sit')
   const [setupExpanded, setSetupExpanded] = useState(false)
 
+  // Get current NFL season year (March 1 to end of February)
+  // March 1, 2025 to Feb 28, 2026 → returns 2025
+  const getCurrentSeasonYear = (): number => {
+    const now = new Date()
+    // If we're on or after March 1st, use current year
+    // Otherwise, use previous year
+    if (now.getMonth() >= 2) { // getMonth() is 0-indexed, so 2 = March
+      return now.getFullYear()
+    } else {
+      return now.getFullYear() - 1
+    }
+  }
+
   const getTeamLogoPath = (teamAbbrev: string): string | null => {
     if (!teamAbbrev) return null
     const teamLogoMap: Record<string, string> = {
@@ -304,7 +317,7 @@ export default function WeeklyRankingsPage() {
                 style={{ marginBottom: 'var(--spacing-sm)' }}
               />
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 'var(--spacing-md)' }}>
-                Season: {new Date().getFullYear()}
+                Season: {getCurrentSeasonYear()}
               </p>
               
                     <button 
@@ -410,7 +423,7 @@ export default function WeeklyRankingsPage() {
                       style={{ marginBottom: 'var(--spacing-sm)' }}
                     />
                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 'var(--spacing-md)' }}>
-                      Season: {new Date().getFullYear()}
+                      Season: {getCurrentSeasonYear()}
                     </p>
                     
                     <button 

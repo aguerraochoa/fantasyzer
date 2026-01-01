@@ -437,10 +437,20 @@ class FantasyDraftTool:
     # ------------------------------
     @staticmethod
     def get_current_season_year() -> int:
-        """Return the current NFL season year (UTC-based)."""
+        """Return the current NFL season year (UTC-based).
+        
+        NFL season runs from March 1 to end of February.
+        - March 1, 2025 to Feb 28, 2026 → returns 2025
+        - March 1, 2026 to Feb 28, 2027 → returns 2026
+        """
         from datetime import datetime
         now = datetime.utcnow()
-        return now.year
+        # If we're on or after March 1st, use current year
+        # Otherwise, use previous year
+        if now.month >= 3:
+            return now.year
+        else:
+            return now.year - 1
 
     @staticmethod
     def fetch_user_id_by_username(username: str) -> Optional[str]:

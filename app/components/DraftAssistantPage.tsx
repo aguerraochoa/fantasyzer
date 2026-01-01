@@ -19,6 +19,19 @@ export default function DraftAssistantPage() {
   const [discoveredDrafts, setDiscoveredDrafts] = useState<Record<string, any[]>>({})
   const [setupExpanded, setSetupExpanded] = useState(false)
 
+  // Get current NFL season year (March 1 to end of February)
+  // March 1, 2025 to Feb 28, 2026 → returns 2025
+  const getCurrentSeasonYear = (): number => {
+    const now = new Date()
+    // If we're on or after March 1st, use current year
+    // Otherwise, use previous year
+    if (now.getMonth() >= 2) { // getMonth() is 0-indexed, so 2 = March
+      return now.getFullYear()
+    } else {
+      return now.getFullYear() - 1
+    }
+  }
+
   const handleLoadRankings = async (scoringFormat: 'Standard' | 'Half-PPR' | 'PPR') => {
     setLoadingRankings(true)
     setError(null)
@@ -213,7 +226,7 @@ export default function DraftAssistantPage() {
                 style={{ marginBottom: 'var(--spacing-sm)' }}
               />
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 'var(--spacing-md)' }}>
-                Season: {new Date().getFullYear()}
+                Season: {getCurrentSeasonYear()}
               </p>
               
               <button 
