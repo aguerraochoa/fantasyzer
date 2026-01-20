@@ -5,6 +5,8 @@ import Navigation from './Navigation'
 import PlayerCard from './PlayerCard'
 import { loadRankings, refreshDraftPicks, getUserLeagues, getLeagueDrafts, type Player } from '../lib/api'
 
+import Sidebar from './Sidebar'
+
 export default function DraftAssistantPage() {
   const [players, setPlayers] = useState<Player[]>([])
   const [sleeperPlayers, setSleeperPlayers] = useState<Record<string, any>>({})
@@ -15,9 +17,9 @@ export default function DraftAssistantPage() {
   const [showTop10, setShowTop10] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [username, setUsername] = useState('')
-  const [discoveredLeagues, setDiscoveredLeagues] = useState<Array<{name: string, id: string}>>([])
+  const [discoveredLeagues, setDiscoveredLeagues] = useState<Array<{ name: string, id: string }>>([])
   const [discoveredDrafts, setDiscoveredDrafts] = useState<Record<string, any[]>>({})
-  const [setupExpanded, setSetupExpanded] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   // Get current NFL season year (March 1 to end of February)
   // March 1, 2025 to Feb 28, 2026 → returns 2025
@@ -35,7 +37,12 @@ export default function DraftAssistantPage() {
   const handleLoadRankings = async (scoringFormat: 'Standard' | 'Half-PPR' | 'PPR') => {
     setLoadingRankings(true)
     setError(null)
-    
+
+    // Close sidebar on mobile
+    if (window.innerWidth <= 768) {
+      setIsSidebarOpen(false)
+    }
+
     try {
       const response = await loadRankings(scoringFormat)
       if (response.success) {
@@ -56,10 +63,15 @@ export default function DraftAssistantPage() {
       setError('Please load rankings and set a draft ID first')
       return
     }
-    
+
     setLoadingRankings(true)
     setError(null)
-    
+
+    // Close sidebar on mobile
+    if (window.innerWidth <= 768) {
+      setIsSidebarOpen(false)
+    }
+
     try {
       const response = await refreshDraftPicks(draftId, players, sleeperPlayers)
       if (response.success) {
@@ -79,10 +91,10 @@ export default function DraftAssistantPage() {
       setError('Please enter a username')
       return
     }
-    
+
     setLoadingLeagues(true)
     setError(null)
-    
+
     try {
       const response = await getUserLeagues(username.trim())
       if (response.success && response.leagues) {
@@ -91,7 +103,7 @@ export default function DraftAssistantPage() {
           id: lg.league_id
         }))
         setDiscoveredLeagues(leagues)
-        
+
         const draftsMap: Record<string, any[]> = {}
         for (const league of leagues) {
           try {
@@ -116,6 +128,10 @@ export default function DraftAssistantPage() {
 
   const handleConnectDraft = (draftId: string) => {
     setDraftId(draftId)
+    // Close sidebar on mobile
+    if (window.innerWidth <= 768) {
+      setIsSidebarOpen(false)
+    }
   }
 
   const getTopPlayers = (position?: string, limit: number = 5) => {
@@ -137,7 +153,7 @@ export default function DraftAssistantPage() {
   const searchPlayers = () => {
     if (!searchQuery.trim()) return []
     const query = searchQuery.toLowerCase()
-    return players.filter(p => 
+    return players.filter(p =>
       p.name.toLowerCase().includes(query) && !p.drafted
     )
   }
@@ -152,25 +168,25 @@ export default function DraftAssistantPage() {
 
   return (
     <div>
-      <Navigation />
-      
-      <div className="container" style={{ paddingTop: 'var(--spacing-2xl)', paddingBottom: 'var(--spacing-2xl)' }}>
+      <Navigation onToggleSidebar={() => setIsSidebarOpen(true)} />
+
+      <div className="container" style={{ paddingTop: 'var(--spacing-md)', paddingBottom: 'var(--spacing-2xl)' }}>
         {error && (
           <div className="message message-error">
             <span>{error}</span>
           </div>
         )}
 
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '320px 1fr', 
-          gap: 'var(--spacing-2xl)', 
-          marginTop: 'var(--spacing-xl)'
-        }} className="main-layout">
+        <div className="main-layout">
           {/* Sidebar */}
-          <aside className="sidebar desktop-sidebar" style={{ position: 'sticky', top: 'var(--spacing-xl)', alignSelf: 'start', maxHeight: 'calc(100vh - var(--spacing-2xl))', overflowY: 'auto' }}>
-            <h3 style={{ marginBottom: 'var(--spacing-lg)', fontSize: '1.125rem', fontWeight: 600 }}>Setup</h3>
-            
+          <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
+            <div style={{ marginBottom: 'var(--spacing-lg)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-md)' }}>
+                <h3 className="section-title" style={{ fontSize: '1.125rem', margin: 0 }}>Setup</h3>
+                {loadingRankings && <div className="spinner-small"></div>}
+              </div>
+            </div>
+
             <div style={{ marginBottom: 'var(--spacing-xl)' }}>
               <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>
                 FantasyPros Rankings
@@ -178,28 +194,28 @@ export default function DraftAssistantPage() {
               <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', marginBottom: 'var(--spacing-md)' }}>
                 Choose your scoring format:
               </p>
-              
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-                <button 
-                  className="btn" 
+                <button
+                  className="btn"
                   onClick={() => handleLoadRankings('Standard')}
                   disabled={loadingRankings}
                   style={{ width: '100%' }}
                 >
                   Standard
                 </button>
-                
-                <button 
-                  className="btn" 
+
+                <button
+                  className="btn"
                   onClick={() => handleLoadRankings('Half-PPR')}
                   disabled={loadingRankings}
                   style={{ width: '100%' }}
                 >
                   Half-PPR
                 </button>
-                
-                <button 
-                  className="btn" 
+
+                <button
+                  className="btn"
                   onClick={() => handleLoadRankings('PPR')}
                   disabled={loadingRankings}
                   style={{ width: '100%' }}
@@ -209,8 +225,8 @@ export default function DraftAssistantPage() {
               </div>
             </div>
 
-            <div style={{ 
-              borderTop: '1px solid var(--border-light)', 
+            <div style={{
+              borderTop: '1px solid var(--border-light)',
               paddingTop: 'var(--spacing-xl)',
               marginBottom: 'var(--spacing-xl)'
             }}>
@@ -228,9 +244,9 @@ export default function DraftAssistantPage() {
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 'var(--spacing-md)' }}>
                 Season: {getCurrentSeasonYear()}
               </p>
-              
-              <button 
-                className="btn btn-primary" 
+
+              <button
+                className="btn btn-primary"
                 onClick={handleFindLeagues}
                 disabled={loadingLeagues || !username.trim()}
                 style={{ width: '100%' }}
@@ -257,7 +273,7 @@ export default function DraftAssistantPage() {
                                 key={draftId}
                                 className="btn"
                                 onClick={() => handleConnectDraft(String(draftId))}
-                                style={{ 
+                                style={{
                                   width: '100%',
                                   fontSize: '0.875rem',
                                   marginBottom: 'var(--spacing-xs)',
@@ -277,8 +293,8 @@ export default function DraftAssistantPage() {
             </div>
 
             {draftId && (
-              <div style={{ 
-                borderTop: '1px solid var(--border-light)', 
+              <div style={{
+                borderTop: '1px solid var(--border-light)',
                 paddingTop: 'var(--spacing-xl)'
               }}>
                 <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>
@@ -292,8 +308,8 @@ export default function DraftAssistantPage() {
                   placeholder="Draft ID"
                   style={{ marginBottom: 'var(--spacing-md)' }}
                 />
-                <button 
-                  className="btn btn-primary" 
+                <button
+                  className="btn btn-primary"
                   onClick={handleRefreshDraftPicks}
                   disabled={loadingRankings}
                   style={{ width: '100%' }}
@@ -302,191 +318,10 @@ export default function DraftAssistantPage() {
                 </button>
               </div>
             )}
-          </aside>
+          </Sidebar>
 
           {/* Main Content */}
           <main>
-            {/* Mobile Setup Section */}
-            <div className="mobile-setup-section">
-              <button
-                onClick={() => setSetupExpanded(!setupExpanded)}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: 'var(--spacing-md)',
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border-light)',
-                  borderRadius: 'var(--radius-lg)',
-                  cursor: 'pointer',
-                  marginBottom: setupExpanded ? 'var(--spacing-md)' : 0
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-                  <span style={{ fontSize: '1.25rem' }}>⚙️</span>
-                  <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>League Setup</span>
-                  {loadingLeagues && <div className="spinner-small" style={{ marginLeft: 'var(--spacing-sm)' }}></div>}
-                </div>
-                <span style={{ fontSize: '1.25rem', transition: 'transform var(--transition-base)', transform: setupExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-                  ▼
-                </span>
-              </button>
-              
-              {setupExpanded && (
-                <div className="mobile-setup-content" style={{
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border-light)',
-                  borderRadius: 'var(--radius-lg)',
-                  padding: 'var(--spacing-lg)',
-                  marginBottom: 'var(--spacing-lg)'
-                }}>
-                  <div style={{ marginBottom: 'var(--spacing-xl)' }}>
-                    <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>
-                      FantasyPros Rankings
-                    </h4>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', marginBottom: 'var(--spacing-md)' }}>
-                      Choose your scoring format:
-                    </p>
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-                      <button 
-                        className="btn" 
-                        onClick={() => handleLoadRankings('Standard')}
-                        disabled={loadingRankings}
-                        style={{ width: '100%' }}
-                      >
-                        Standard
-                      </button>
-                      
-                      <button 
-                        className="btn" 
-                        onClick={() => handleLoadRankings('Half-PPR')}
-                        disabled={loadingRankings}
-                        style={{ width: '100%' }}
-                      >
-                        Half-PPR
-                      </button>
-                      
-                      <button 
-                        className="btn" 
-                        onClick={() => handleLoadRankings('PPR')}
-                        disabled={loadingRankings}
-                        style={{ width: '100%' }}
-                      >
-                        PPR
-                      </button>
-                    </div>
-                  </div>
-
-                  <div style={{ 
-                    borderTop: '1px solid var(--border-light)', 
-                    paddingTop: 'var(--spacing-xl)',
-                    marginBottom: 'var(--spacing-xl)'
-                  }}>
-                    <h4 style={{ marginBottom: 'var(--spacing-sm)', fontSize: '0.9375rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                      Discover Your Leagues
-                    </h4>
-                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginBottom: 'var(--spacing-sm)' }}>
-                      Enter your Sleeper username to find your leagues
-                    </p>
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder="your_username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      style={{ marginBottom: 'var(--spacing-sm)' }}
-                    />
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 'var(--spacing-md)' }}>
-                      Season: {new Date().getFullYear()}
-                    </p>
-                    
-                    <button 
-                      className="btn btn-primary" 
-                      onClick={handleFindLeagues}
-                      disabled={loadingLeagues || !username.trim()}
-                      style={{ width: '100%' }}
-                    >
-                      Find my leagues
-                    </button>
-
-                    {discoveredLeagues.length > 0 && (
-                      <div style={{ marginTop: 'var(--spacing-lg)' }}>
-                        <p style={{ 
-                          fontSize: '0.875rem', 
-                          color: 'var(--text-secondary)', 
-                          marginBottom: 'var(--spacing-md)',
-                          fontWeight: 500
-                        }}>
-                          Your Leagues:
-                        </p>
-                        {discoveredLeagues.map((league) => {
-                          const drafts = discoveredDrafts[league.id] || []
-                          return (
-                            <div key={league.id} style={{ marginBottom: 'var(--spacing-md)' }}>
-                              {drafts.length === 0 ? (
-                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No drafts found</p>
-                              ) : (
-                                drafts.map((draft: any) => {
-                                  const draftId = draft.draft_id || draft.draft_id
-                                  return (
-                                    <button
-                                      key={draftId}
-                                      className="btn"
-                                      onClick={() => {
-                                        handleConnectDraft(String(draftId))
-                                        setSetupExpanded(false)
-                                      }}
-                                      style={{ 
-                                        width: '100%',
-                                        fontSize: '0.875rem',
-                                        marginBottom: 'var(--spacing-xs)',
-                                        justifyContent: 'flex-start'
-                                      }}
-                                    >
-                                      {league.name}
-                                    </button>
-                                  )
-                                })
-                              )}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  {draftId && (
-                    <div style={{ 
-                      borderTop: '1px solid var(--border-light)', 
-                      paddingTop: 'var(--spacing-xl)'
-                    }}>
-                      <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>
-                        Draft ID
-                      </h4>
-                      <input
-                        type="text"
-                        className="input"
-                        value={draftId}
-                        onChange={(e) => setDraftId(e.target.value)}
-                        placeholder="Draft ID"
-                        style={{ marginBottom: 'var(--spacing-md)' }}
-                      />
-                      <button 
-                        className="btn btn-primary" 
-                        onClick={handleRefreshDraftPicks}
-                        disabled={loadingRankings}
-                        style={{ width: '100%' }}
-                      >
-                        Refresh Draft Picks
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-sm)' }}>
               <h1 className="app-title" style={{ margin: 0 }}>Draft Assistant</h1>
               {loadingRankings && <div className="spinner-small"></div>}
@@ -524,16 +359,16 @@ export default function DraftAssistantPage() {
             ) : (
               <>
                 <div className="section-title">Top Available Overall</div>
-                
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
+
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: 'var(--spacing-md)',
                   marginBottom: 'var(--spacing-lg)'
                 }}>
-                  <label style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'center',
                     gap: 'var(--spacing-sm)',
                     cursor: 'pointer',
                     fontSize: '0.875rem',
@@ -543,7 +378,7 @@ export default function DraftAssistantPage() {
                       type="checkbox"
                       checked={showTop10}
                       onChange={(e) => setShowTop10(e.target.checked)}
-                      style={{ 
+                      style={{
                         width: '18px',
                         height: '18px',
                         cursor: 'pointer',
@@ -553,7 +388,7 @@ export default function DraftAssistantPage() {
                     <span>Show top 10</span>
                   </label>
                 </div>
-                
+
                 {topOverall.map((player, idx) => (
                   <PlayerCard
                     key={`${player.name}-${player.overall_rank}`}
@@ -573,7 +408,7 @@ export default function DraftAssistantPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{ marginBottom: 'var(--spacing-lg)', maxWidth: '500px' }}
                 />
-                
+
                 {searchQuery && searchResults.length > 0 && (
                   <div>
                     {searchResults.map((player) => (
@@ -642,24 +477,24 @@ export default function DraftAssistantPage() {
                 {drafted.length > 0 && (
                   <>
                     <div className="section-title">Drafted Players</div>
-                    <div style={{ 
+                    <div style={{
                       display: 'grid',
                       gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
                       gap: 'var(--spacing-md)',
                       marginTop: 'var(--spacing-lg)'
                     }}>
                       {drafted.map((player, idx) => (
-                        <div 
+                        <div
                           key={`${player.name}-${player.overall_rank}`}
                           className="card"
                           style={{ padding: 'var(--spacing-md)' }}
                         >
-                          <div style={{ 
+                          <div style={{
                             display: 'flex',
                             alignItems: 'center',
                             gap: 'var(--spacing-md)'
                           }}>
-                            <div style={{ 
+                            <div style={{
                               width: '32px',
                               height: '32px',
                               background: 'var(--accent-primary)',

@@ -1,26 +1,27 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+interface NavigationProps {
+  onToggleSidebar: () => void
+}
 
-export default function Navigation() {
-  const pathname = usePathname()
-  
+export default function Navigation({ onToggleSidebar }: NavigationProps) {
   return (
     <nav className="nav">
-      <Link 
-        href="/" 
-        className={pathname === '/' ? 'btn btn-primary' : 'btn'}
-      >
-        Weekly Rankings
-      </Link>
+      <div className="nav-left">
+        <button
+          className="hamburger-btn mobile-only"
+          onClick={onToggleSidebar}
+          aria-label="Open menu"
+        >
+          ☰
+        </button>
+      </div>
+
       <div className="nav-center">Fantasyzer</div>
-      <Link 
-        href="/draft" 
-        className={pathname === '/draft' ? 'btn btn-primary' : 'btn'}
-      >
-        Draft Assistant
-      </Link>
+
+      <div className="nav-right">
+        {/* Placeholder for right side if needed (e.g. user profile) */}
+      </div>
     </nav>
   )
 }
