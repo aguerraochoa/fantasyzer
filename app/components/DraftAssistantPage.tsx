@@ -19,6 +19,7 @@ export default function DraftAssistantPage() {
   const [username, setUsername] = useState('')
   const [discoveredLeagues, setDiscoveredLeagues] = useState<Array<{ name: string, id: string }>>([])
   const [discoveredDrafts, setDiscoveredDrafts] = useState<Record<string, any[]>>({})
+  const [hasSearched, setHasSearched] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   // Get current NFL season year (March 1 to end of February)
@@ -94,6 +95,7 @@ export default function DraftAssistantPage() {
 
     setLoadingLeagues(true)
     setError(null)
+    setHasSearched(true)
 
     try {
       const response = await getUserLeagues(username.trim())
@@ -180,142 +182,188 @@ export default function DraftAssistantPage() {
         <div className="main-layout">
           {/* Sidebar */}
           <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
-            <div style={{ marginBottom: 'var(--spacing-lg)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-md)' }}>
-                <h3 className="section-title" style={{ fontSize: '1.125rem', margin: 0 }}>Setup</h3>
-                {loadingRankings && <div className="spinner-small"></div>}
+            <div className="sidebar-section" style={{ paddingLeft: 'var(--spacing-md)', paddingRight: 'var(--spacing-md)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-sm)' }}>
+                <h4 className="sidebar-section-title" style={{ margin: 0, padding: 0, color: 'white' }}>Rankings Setup</h4>
+                {loadingRankings && <div className="spinner-small" style={{ borderLeftColor: 'white' }}></div>}
               </div>
             </div>
 
-            <div style={{ marginBottom: 'var(--spacing-xl)' }}>
-              <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>
-                FantasyPros Rankings
-              </h4>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', marginBottom: 'var(--spacing-md)' }}>
-                Choose your scoring format:
+            <div className="sidebar-section" style={{ paddingTop: 0, paddingLeft: 'var(--spacing-md)', paddingRight: 'var(--spacing-md)' }}>
+              <p style={{ fontSize: '0.8125rem', color: 'white', marginBottom: 'var(--spacing-sm)', opacity: 0.8 }}>
+                Scoring Format:
               </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <button
-                  className="btn"
+                  className="sidebar-link"
                   onClick={() => handleLoadRankings('Standard')}
                   disabled={loadingRankings}
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent' }}
                 >
-                  Standard
+                  <span style={{ marginRight: 'var(--spacing-xs)' }}>📊</span> Standard
                 </button>
 
                 <button
-                  className="btn"
+                  className="sidebar-link"
                   onClick={() => handleLoadRankings('Half-PPR')}
                   disabled={loadingRankings}
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent' }}
                 >
-                  Half-PPR
+                  <span style={{ marginRight: 'var(--spacing-xs)' }}>📈</span> Half-PPR
                 </button>
 
                 <button
-                  className="btn"
+                  className="sidebar-link"
                   onClick={() => handleLoadRankings('PPR')}
                   disabled={loadingRankings}
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent' }}
                 >
-                  PPR
+                  <span style={{ marginRight: 'var(--spacing-xs)' }}>🔥</span> PPR
                 </button>
               </div>
             </div>
 
-            <div style={{
-              borderTop: '1px solid var(--border-light)',
-              paddingTop: 'var(--spacing-xl)',
-              marginBottom: 'var(--spacing-xl)'
+            <div className="sidebar-section" style={{
+              padding: 'var(--spacing-md) var(--spacing-md)',
+              borderTop: '1px solid rgba(255,255,255,0.1)'
             }}>
-              <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>
+              <h4 className="sidebar-section-title" style={{ marginBottom: 'var(--spacing-md)', padding: 0 }}>
                 Sleeper Discovery
               </h4>
+              <p style={{ fontSize: '0.8125rem', color: 'white', marginBottom: 'var(--spacing-sm)', opacity: 0.8 }}>
+                Enter Sleeper username:
+              </p>
               <input
                 type="text"
                 className="input"
                 placeholder="your_username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                style={{ marginBottom: 'var(--spacing-sm)' }}
+                style={{
+                  marginBottom: 'var(--spacing-xs)',
+                  height: '38px',
+                  fontSize: '0.875rem',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'white'
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleFindLeagues()}
               />
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 'var(--spacing-md)' }}>
+              <p style={{ fontSize: '0.75rem', color: 'white', marginBottom: 'var(--spacing-md)', opacity: 0.6 }}>
                 Season: {getCurrentSeasonYear()}
               </p>
 
-              <button
-                className="btn btn-primary"
-                onClick={handleFindLeagues}
-                disabled={loadingLeagues || !username.trim()}
-                style={{ width: '100%' }}
-              >
-                Find my leagues
-              </button>
 
-              {discoveredLeagues.length > 0 && (
+
+              {hasSearched && !loadingLeagues && (
                 <div style={{ marginTop: 'var(--spacing-lg)' }}>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-md)', fontWeight: 500 }}>
+                  <p style={{
+                    fontSize: '0.75rem',
+                    color: 'white',
+                    marginBottom: 'var(--spacing-sm)',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    opacity: 0.6,
+                    padding: '0 var(--spacing-md)'
+                  }}>
                     Your Leagues:
                   </p>
-                  {discoveredLeagues.map((league) => {
-                    const drafts = discoveredDrafts[league.id] || []
-                    return (
-                      <div key={league.id} style={{ marginBottom: 'var(--spacing-md)' }}>
-                        {drafts.length === 0 ? (
-                          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No drafts found</p>
-                        ) : (
-                          drafts.map((draft: any) => {
-                            const draftId = draft.draft_id || draft.draft_id
-                            return (
-                              <button
-                                key={draftId}
-                                className="btn"
-                                onClick={() => handleConnectDraft(String(draftId))}
-                                style={{
-                                  width: '100%',
-                                  fontSize: '0.875rem',
-                                  marginBottom: 'var(--spacing-xs)',
-                                  justifyContent: 'flex-start'
-                                }}
-                              >
-                                {league.name}
-                              </button>
-                            )
-                          })
-                        )}
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {discoveredLeagues.length > 0 ? (
+                      discoveredLeagues.map((league) => {
+                        const drafts = discoveredDrafts[league.id] || []
+                        return (
+                          <div key={league.id}>
+                            {drafts.length === 0 ? (
+                              <div style={{
+                                padding: 'var(--spacing-sm) var(--spacing-md)',
+                                color: 'rgba(255,255,255,0.4)',
+                                fontSize: '0.75rem',
+                                fontStyle: 'italic'
+                              }}>
+                                No drafts found for {league.name}
+                              </div>
+                            ) : (
+                              drafts.map((draft: any) => {
+                                const draftId = draft.draft_id || draft.draft_id
+                                return (
+                                  <button
+                                    key={draftId}
+                                    className="sidebar-link"
+                                    onClick={() => handleConnectDraft(String(draftId))}
+                                    style={{
+                                      width: '100%',
+                                      fontSize: '0.875rem',
+                                      justifyContent: 'flex-start',
+                                      border: 'none',
+                                      background: 'transparent',
+                                      padding: '8px var(--spacing-md)',
+                                      color: 'white'
+                                    }}
+                                  >
+                                    <span>📝</span>
+                                    <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                      {league.name}
+                                    </span>
+                                  </button>
+                                )
+                              })
+                            )}
+                          </div>
+                        )
+                      })
+                    ) : (
+                      <div style={{
+                        padding: 'var(--spacing-md)',
+                        textAlign: 'center',
+                        color: 'rgba(255, 255, 255, 0.5)',
+                        fontSize: '0.8125rem',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px dashed rgba(255, 255, 255, 0.1)',
+                        margin: '0 var(--spacing-md)'
+                      }}>
+                        No leagues found
                       </div>
-                    )
-                  })}
+                    )}
+                  </div>
                 </div>
               )}
             </div>
 
             {draftId && (
-              <div style={{
-                borderTop: '1px solid var(--border-light)',
-                paddingTop: 'var(--spacing-xl)'
+              <div className="sidebar-section" style={{
+                padding: 'var(--spacing-lg)',
+                borderTop: '1px solid var(--border-light)'
               }}>
-                <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem', color: 'var(--text-secondary)' }}>
-                  Draft ID
+                <h4 className="sidebar-section-title" style={{ marginBottom: 'var(--spacing-md)' }}>
+                  Active Draft
                 </h4>
-                <input
-                  type="text"
-                  className="input"
-                  value={draftId}
-                  onChange={(e) => setDraftId(e.target.value)}
-                  placeholder="Draft ID"
-                  style={{ marginBottom: 'var(--spacing-md)' }}
-                />
-                <button
-                  className="btn btn-primary"
-                  onClick={handleRefreshDraftPicks}
-                  disabled={loadingRankings}
-                  style={{ width: '100%' }}
-                >
-                  Refresh Draft Picks
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+                  <div>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginBottom: 'var(--spacing-xs)' }}>
+                      Draft ID:
+                    </p>
+                    <input
+                      type="text"
+                      className="input"
+                      value={draftId}
+                      onChange={(e) => setDraftId(e.target.value)}
+                      placeholder="Draft ID"
+                      style={{ height: '36px', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleRefreshDraftPicks}
+                    disabled={loadingRankings}
+                    style={{ width: '100%', height: '38px', fontSize: '0.875rem' }}
+                  >
+                    Refresh Draft Picks
+                  </button>
+                </div>
               </div>
             )}
           </Sidebar>
@@ -331,29 +379,89 @@ export default function DraftAssistantPage() {
             </p>
 
             {players.length === 0 ? (
-              <div className="card" style={{ textAlign: 'center', padding: 'var(--spacing-2xl)' }}>
-                <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-lg)' }}>👆</div>
-                <h3 style={{ marginBottom: 'var(--spacing-md)' }}>Get Started</h3>
-                <p style={{ marginBottom: 'var(--spacing-xl)', color: 'var(--text-secondary)' }}>
-                  <span className="desktop-only">Use the sidebar to load FantasyPros rankings</span>
-                  <span className="mobile-only">Click "League Setup" above to load FantasyPros rankings</span>
-                </p>
-                <div style={{ textAlign: 'left', maxWidth: '500px', margin: '0 auto' }}>
-                  <h4 style={{ marginBottom: 'var(--spacing-md)' }}>Quick Start:</h4>
-                  <ul style={{ listStyle: 'none', padding: 0 }}>
-                    <li style={{ marginBottom: 'var(--spacing-sm)', display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-                      <span>🎯</span>
-                      <span>Click one of the scoring format buttons (Standard, Half-PPR, or PPR)</span>
-                    </li>
-                    <li style={{ marginBottom: 'var(--spacing-sm)', display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-                      <span>⚡</span>
-                      <span>Rankings are automatically loaded from FantasyPros</span>
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-                      <span>✨</span>
-                      <span>No file download needed!</span>
-                    </li>
-                  </ul>
+              <div className="card" style={{
+                textAlign: 'left',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border-light)',
+                borderRadius: 'var(--radius-lg)',
+                padding: 'var(--spacing-xl)',
+                maxWidth: '600px',
+                margin: '0 auto', // Center the card
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+              }}>
+                <div style={{ marginBottom: 'var(--spacing-lg)' }}>
+                  <h3 style={{ marginBottom: 'var(--spacing-sm)', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    Draft Assistant
+                  </h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.5 }}>
+                    <span className="desktop-only">Connect your league to sync live draft picks and get real-time advice.</span>
+                    <span className="mobile-only">Open the menu to load rankings or connect a draft.</span>
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+                  <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      background: 'var(--accent-primary)',
+                      color: 'white',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      flexShrink: 0,
+                      marginTop: '2px'
+                    }}>1</div>
+                    <div>
+                      <h4 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-primary)' }}>Select Scoring</h4>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Choose Standard, Half-PPR, or PPR from the sidebar.</p>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      background: 'var(--accent-primary)',
+                      color: 'white',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      flexShrink: 0,
+                      marginTop: '2px'
+                    }}>2</div>
+                    <div>
+                      <h4 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-primary)' }}>Instant Rankings</h4>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Player rankings load automatically from FantasyPros.</p>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      background: 'var(--accent-primary)',
+                      color: 'white',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      flexShrink: 0,
+                      marginTop: '2px'
+                    }}>3</div>
+                    <div>
+                      <h4 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-primary)' }}>Sync Draft</h4>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Enter your Sleeper Draft ID to track picks live.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (

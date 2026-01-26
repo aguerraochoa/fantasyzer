@@ -56,13 +56,13 @@ export default function PlayerCard({ player, index, sleeperPlayers, hideInjuryOn
       return { desktop: name, mobile: name }
     }
   }
-  
+
   const isDefense = player.position === 'DEF' || player.position === 'DST'
   const nameFormats = formatPlayerName(player.name, isDefense)
-  
+
   const getTeamLogoPath = (teamAbbrev: string): string | null => {
     if (!teamAbbrev) return null
-    
+
     const teamLogoMap: Record<string, string> = {
       "ARI": "/team_logos/Arizona_Cardinals_logo.svg.png",
       "ATL": "/team_logos/Atlanta_Falcons_logo.svg.png",
@@ -98,14 +98,14 @@ export default function PlayerCard({ player, index, sleeperPlayers, hideInjuryOn
       "TEN": "/team_logos/Tennessee_Titans_logo.svg.png",
       "WAS": "/team_logos/Washington_football_team_wlogo.svg.png",
     }
-    
+
     return teamLogoMap[teamAbbrev.toUpperCase()] || null
   }
-  
+
   const logoPath = getTeamLogoPath(player.team)
-  const injury = player.injury_status || 
+  const injury = player.injury_status ||
     (player.sleeper_id && sleeperPlayers?.[player.sleeper_id]?.injury_status)
-  
+
   const getPositionColor = (position: string) => {
     const colors: Record<string, string> = {
       'QB': 'QB',
@@ -117,11 +117,17 @@ export default function PlayerCard({ player, index, sleeperPlayers, hideInjuryOn
     }
     return colors[position] || ''
   }
-  
+
   return (
-    <div className="player-card fade-in">
+    <div className="player-card fade-in" style={{
+      borderLeft: `4px solid var(--position-${getPositionColor(player.position)})`,
+      padding: 'var(--spacing-md) var(--spacing-lg)'
+    }}>
       {logoPath && (
-        <div className="player-logo-container">
+        <div className="player-logo-container" style={{
+          background: 'var(--bg-tertiary)',
+          boxShadow: 'inset 0 0 0 1px var(--border-light)'
+        }}>
           <Image
             src={logoPath}
             alt={player.team}
@@ -132,37 +138,69 @@ export default function PlayerCard({ player, index, sleeperPlayers, hideInjuryOn
         </div>
       )}
       <div className="player-content">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', flexWrap: 'wrap', flex: 1 }}>
-          {index !== undefined && <span className="num-badge">{index}</span>}
-          <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>
-            <span className="desktop-only">{nameFormats.desktop}</span>
-            <span className="mobile-only">{nameFormats.mobile}</span>
-          </span>
-          {player.team && (
-            <span style={{ 
-              color: 'var(--text-tertiary)',
-              fontSize: '0.8125rem',
-              fontWeight: 400
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', flexWrap: 'wrap', flex: 1 }}>
+          {index !== undefined && (
+            <span className="num-badge" style={{
+              background: 'var(--navy)',
+              fontSize: '0.7rem',
+              width: '24px',
+              height: '24px'
             }}>
-              {player.team}
+              {index}
             </span>
           )}
-          {player.position && (
-            <span className={`position-tag ${getPositionColor(player.position)}`}>
-              {player.position}
-            </span>
-          )}
-          <span className="badge">#{player.overall_rank}</span>
-          <span className="badge">{player.position}#{player.position_rank}</span>
-          {player.tier && <span className="badge">T{player.tier}</span>}
-          {player.bye_week > 0 && <span className="badge">Bye {player.bye_week}</span>}
+
+          <div style={{ flex: 1, minWidth: '120px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+              <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
+                <span className="desktop-only">{nameFormats.desktop}</span>
+                <span className="mobile-only">{nameFormats.mobile}</span>
+              </span>
+              {player.team && (
+                <span style={{
+                  color: 'var(--text-tertiary)',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.02em'
+                }}>
+                  {player.team}
+                </span>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginTop: '2px' }}>
+              {player.position && (
+                <span className={`position-tag ${getPositionColor(player.position)}`} style={{ fontSize: '0.65rem', padding: '1px 6px' }}>
+                  {player.position}
+                </span>
+              )}
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+                Tier {player.tier} • Bye {player.bye_week}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 'var(--spacing-xs)', alignItems: 'center' }}>
+            <div style={{ textAlign: 'right', marginRight: 'var(--spacing-sm)' }}>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Rank</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--navy)' }}>#{player.overall_rank}</div>
+            </div>
+            <div style={{ textAlign: 'right', minWidth: '60px' }}>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Pos</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-secondary)' }}>{player.position}{player.position_rank}</div>
+            </div>
+          </div>
+
           {injury && (
-            <span 
+            <span
               className={`badge ${hideInjuryOnMobile ? 'desktop-only' : ''}`}
-              style={{ 
-                background: 'rgba(239, 68, 68, 0.1)',
+              style={{
+                background: 'rgba(239, 68, 68, 0.08)',
                 color: 'var(--accent-error)',
-                border: '1px solid rgba(239, 68, 68, 0.2)'
+                border: '1px solid rgba(239, 68, 68, 0.15)',
+                fontWeight: 700,
+                fontSize: '0.65rem'
               }}
             >
               {injury}
